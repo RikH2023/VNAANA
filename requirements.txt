@@ -1,0 +1,8 @@
+# Pinned on purpose (see ADR: FastAPI as Web Framework)
+fastapi==0.141.1
+starlette==1.7.0
+pydantic==2.13.5
+pydantic-settings==2.15.0
+uvicorn[standard]==0.54.0
+SQLAlchemy==2.1.1
+psycopg[binary]==3.3.6
