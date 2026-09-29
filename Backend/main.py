@@ -10,8 +10,8 @@ Layers:
 """
 from fastapi import FastAPI
 
-from Backend.presentation.error_handlers import register_error_handlers
-from Backend.presentation.routers import articles, stories, users
+from Backend.Presentation.error_handlers import register_error_handlers
+from Backend.Presentation.routers import articles, stories, users
 
 app = FastAPI(
     title="VNAANA API",

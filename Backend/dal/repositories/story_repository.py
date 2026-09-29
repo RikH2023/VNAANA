@@ -5,23 +5,58 @@ from typing import Any
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session, selectinload
 
-from Backend.dal.models import Story, StoryArticle, StoryStatus, StoryTag
+from Backend.dal.models import (
+    Story as StoryModel,
+    StoryArticle as StoryArticleModel,
+    StoryStatus,
+    StoryTag as StoryTagModel,
+)
+from Backend.Logic.domain.story import Story
+from Backend.Logic.domain.story_article_link import StoryArticleLink
+from Backend.Logic.ports.story_repository import (
+    StoryRepository as StoryRepositoryPort,
+)
 
 
-class StoryRepository:
+class StoryRepository(StoryRepositoryPort):
     def __init__(self, db: Session):
         self.db = db
 
-    def get(self, story_id: uuid.UUID, *, with_relations: bool = False) -> Story | None:
-        if not with_relations:
-            return self.db.get(Story, story_id)
-        stmt = (
-            select(Story)
-            .where(Story.id == story_id)
-            .options(selectinload(Story.tags), selectinload(Story.articles))
-            .execution_options(populate_existing=True)
+    # ---- mappings ----
+
+    @staticmethod
+    def _to_domain(story: StoryModel) -> Story:
+        return Story(
+            id=story.id,
+            title=story.title,
+            summary=story.summary,
+            context=story.context,
+            status=story.status,
+            first_published_at=story.first_published_at,
+            last_updated_at=story.last_updated_at,
         )
-        return self.db.scalars(stmt).first()
+
+    @staticmethod
+    def _article_link_to_domain(
+        link: StoryArticleModel,
+    ) -> StoryArticleLink:
+        return StoryArticleLink(
+            story_id=link.story_id,
+            article_id=link.article_id,
+            similarity_score=link.similarity_score,
+            is_primary=link.is_primary,
+            added_at=link.added_at,
+        )
+
+    # ---- stories ----
+
+    def get(self, story_id: uuid.UUID) -> Story | None:
+        story = self.db.get(StoryModel, story_id)
+
+        if story is None:
+            return None
+
+        return self._to_domain(story)
 
     def list(
         self,
@@ -31,61 +66,146 @@ class StoryRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> list[Story]:
-        stmt = select(Story)
+        stmt = select(StoryModel)
+
         if status is not None:
-            stmt = stmt.where(Story.status == status)
+            stmt = stmt.where(StoryModel.status == status)
+
         if tag_id is not None:
-            stmt = stmt.join(StoryTag).where(StoryTag.tag_id == tag_id)
-        stmt = stmt.order_by(Story.last_updated_at.desc()).limit(limit).offset(offset)
-        return list(self.db.scalars(stmt))
+            stmt = (
+                stmt
+                .join(StoryTagModel)
+                .where(StoryTagModel.tag_id == tag_id)
+            )
+
+        stmt = (
+            stmt
+            .order_by(StoryModel.last_updated_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+
+        stories = self.db.scalars(stmt)
+
+        return [self._to_domain(story) for story in stories]
 
     def add(self, **fields: Any) -> Story:
-        story = Story(**fields)
-        self.db.add(story)
+        story_model = StoryModel(**fields)
+
+        self.db.add(story_model)
         self.db.flush()
-        return story
+
+        return self._to_domain(story_model)
 
     def update(self, story: Story, **fields: Any) -> Story:
+        story_model = self.db.get(StoryModel, story.id)
+
+        if story_model is None:
+            raise ValueError(f"Story {story.id} not found")
+
         for key, value in fields.items():
-            setattr(story, key, value)
+            setattr(story_model, key, value)
+
         self.db.flush()
-        return story
+
+        return self._to_domain(story_model)
 
     # ---- story_tags ----
 
-    def replace_tags(self, story: Story, tags: dict[uuid.UUID, Decimal | None]) -> None:
-        """Replace the story's tags. `tags` maps tag_id -> relevance_score."""
-        current = {st.tag_id: st for st in story.tags}
+    def replace_tags(
+        self,
+        story: Story,
+        tags: dict[uuid.UUID, Decimal | None],
+    ) -> None:
+        stmt = select(StoryTagModel).where(
+            StoryTagModel.story_id == story.id
+        )
 
-        for tag_id, story_tag in current.items():
+        current_links = list(self.db.scalars(stmt))
+        current = {
+            link.tag_id: link
+            for link in current_links
+        }
+
+        for tag_id, link in current.items():
             if tag_id not in tags:
-                story.tags.remove(story_tag)  # delete-orphan removes the row
+                self.db.delete(link)
+
         for tag_id, score in tags.items():
             if tag_id in current:
                 current[tag_id].relevance_score = score
             else:
-                story.tags.append(StoryTag(tag_id=tag_id, relevance_score=score))
+                self.db.add(
+                    StoryTagModel(
+                        story_id=story.id,
+                        tag_id=tag_id,
+                        relevance_score=score,
+                    )
+                )
+
         self.db.flush()
 
     # ---- story_articles ----
 
-    def get_article_link(self, story_id: uuid.UUID, article_id: uuid.UUID) -> StoryArticle | None:
-        return self.db.get(StoryArticle, (story_id, article_id))
+    def get_article_link(
+        self,
+        story_id: uuid.UUID,
+        article_id: uuid.UUID,
+    ) -> StoryArticleLink | None:
+        link = self.db.get(
+            StoryArticleModel,
+            (story_id, article_id),
+        )
 
-    def add_article_link(self, **fields: Any) -> StoryArticle:
-        link = StoryArticle(**fields)
-        self.db.add(link)
+        if link is None:
+            return None
+
+        return self._article_link_to_domain(link)
+
+    def add_article_link(
+        self,
+        *,
+        story_id: uuid.UUID,
+        article_id: uuid.UUID,
+        similarity_score: Decimal | None = None,
+        is_primary: bool = False,
+    ) -> StoryArticleLink:
+        link_model = StoryArticleModel(
+            story_id=story_id,
+            article_id=article_id,
+            similarity_score=similarity_score,
+            is_primary=is_primary,
+        )
+
+        self.db.add(link_model)
         self.db.flush()
-        return link
+
+        return self._article_link_to_domain(link_model)
 
     def clear_primary(self, story_id: uuid.UUID) -> None:
-        """Unset is_primary on every article of this story."""
         self.db.execute(
-            update(StoryArticle)
-            .where(StoryArticle.story_id == story_id, StoryArticle.is_primary.is_(True))
+            update(StoryArticleModel)
+            .where(
+                StoryArticleModel.story_id == story_id,
+                StoryArticleModel.is_primary.is_(True),
+            )
             .values(is_primary=False)
         )
 
-    def remove_article_link(self, link: StoryArticle) -> None:
+        self.db.flush()
+
+    def remove_article_link(
+        self,
+        story_id: uuid.UUID,
+        article_id: uuid.UUID,
+    ) -> None:
+        link = self.db.get(
+            StoryArticleModel,
+            (story_id, article_id),
+        )
+
+        if link is None:
+            return
+
         self.db.delete(link)
         self.db.flush()

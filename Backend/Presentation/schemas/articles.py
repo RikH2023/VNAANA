@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from Backend.presentation.schemas.common import ORMModel
+from Backend.Presentation.schemas.common import ORMModel
 
 
 class ProviderRead(ORMModel):

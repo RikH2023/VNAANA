@@ -3,9 +3,9 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from Backend.dal.models import StoryStatus
-from Backend.presentation.schemas.articles import ArticleSummary
-from Backend.presentation.schemas.common import ORMModel, TagRead
+from Backend.Logic.domain.story import StoryStatus
+from Backend.Presentation.schemas.articles import ArticleSummary
+from Backend.Presentation.schemas.common import ORMModel, TagRead
 
 
 class StoryCreate(BaseModel):

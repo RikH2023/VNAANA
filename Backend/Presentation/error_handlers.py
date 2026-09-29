@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from Backend.logic.exceptions import ConflictError, ConsentRequiredError, DomainError, NotFoundError
+from Backend.Logic.exceptions import ConflictError, ConsentRequiredError, DomainError, NotFoundError
 
 _STATUS_BY_ERROR: dict[type[DomainError], int] = {
     NotFoundError: status.HTTP_404_NOT_FOUND,
