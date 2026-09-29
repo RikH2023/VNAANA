@@ -1,58 +1,82 @@
 import uuid
+from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy.orm import Session
-
-from Backend.dal.models import Article
-from Backend.dal.models.base import utcnow
-from Backend.dal.repositories import ArticleRepository, ProviderRepository
+from Backend.Logic.domain.article import Article
 from Backend.Logic.exceptions import NotFoundError
+from Backend.Logic.ports.article_repository import ArticleRepository
+from Backend.Logic.ports.provider_repository import ProviderRepository
 
 
 class ArticleService:
-    def __init__(self, db: Session):
-        self.db = db
-        self.articles = ArticleRepository(db)
-        self.providers = ProviderRepository(db)
-
     def list_articles(
         self,
-        provider_id: uuid.UUID | None,
-        language: str | None,
-        limit: int,
-        offset: int,
+        articles: ArticleRepository,
+        *,
+        provider_id: uuid.UUID | None = None,
+        language: str | None = None,
+        limit: int = 20,
+        offset: int = 0,
     ) -> list[Article]:
-        return self.articles.list(
-            provider_id=provider_id, language=language, limit=limit, offset=offset
+        return articles.list(
+            provider_id=provider_id,
+            language=language,
+            limit=limit,
+            offset=offset,
         )
 
-    def get_article(self, article_id: uuid.UUID) -> Article:
-        article = self.articles.get(article_id)
+    def get_article(
+        self,
+        articles: ArticleRepository,
+        article_id: uuid.UUID,
+    ) -> Article:
+        article = articles.get(article_id)
+
         if article is None:
             raise NotFoundError("Article", article_id)
+
         return article
 
-    def ingest_article(self, data: dict[str, Any]) -> tuple[Article, bool]:
-        """Insert an article, or refresh it if the canonical_url is already known.
+    def ingest_article(
+        self,
+        articles: ArticleRepository,
+        providers: ProviderRepository,
+        data: dict[str, Any],
+    ) -> tuple[Article, bool]:
+        """Insert an article or refresh an existing article.
 
-        The scraper will see the same article on every run, so a repeat is not
-        an error: we bump last_seen_at and update the content fields instead.
-        Returns (article, created).
+        The scraper may encounter the same article on multiple runs.
+        If the canonical URL already exists, the existing article is
+        refreshed instead of creating a duplicate.
+
+        Returns:
+            tuple[Article, bool]:
+                The article and whether it was newly created.
         """
-        if self.providers.get(data["provider_id"]) is None:
-            raise NotFoundError("Provider", data["provider_id"])
+        provider_id = data["provider_id"]
+
+        if providers.get(provider_id) is None:
+            raise NotFoundError("Provider", provider_id)
 
         data["canonical_url"] = data["canonical_url"].strip()
-        existing = self.articles.get_by_canonical_url(data["canonical_url"])
+
+        existing = articles.get_by_canonical_url(data["canonical_url"])
 
         if existing is None:
-            article = self.articles.add(**data)
+            article = articles.add(**data)
             created = True
         else:
-            # Never overwrite a known value with an empty one.
-            changes = {k: v for k, v in data.items() if v is not None and k != "canonical_url"}
-            article = self.articles.update(existing, **changes, last_seen_at=utcnow())
+            changes = {
+                key: value
+                for key, value in data.items()
+                if value is not None and key != "canonical_url"
+            }
+
+            article = articles.update(
+                existing,
+                **changes,
+                last_seen_at=datetime.now(timezone.utc),
+            )
             created = False
 
-        self.db.commit()
         return article, created

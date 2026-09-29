@@ -2,7 +2,8 @@ import uuid
 from decimal import Decimal
 from typing import Any, Protocol
 
-from Backend.Logic.domain.story import Story, StoryStatus
+from Backend.logic.domain.story import Story, StoryStatus
+from Backend.logic.domain.story_article_link import StoryArticleLink
 
 
 class StoryRepository(Protocol):
@@ -36,7 +37,7 @@ class StoryRepository(Protocol):
         self,
         story_id: uuid.UUID,
         article_id: uuid.UUID,
-    ):
+    ) -> StoryArticleLink | None:
         ...
 
     def add_article_link(
@@ -44,8 +45,9 @@ class StoryRepository(Protocol):
         *,
         story_id: uuid.UUID,
         article_id: uuid.UUID,
+        similarity_score: Decimal | None = None,
         is_primary: bool = False,
-    ):
+    ) -> StoryArticleLink:
         ...
 
     def clear_primary(self, story_id: uuid.UUID) -> None:
