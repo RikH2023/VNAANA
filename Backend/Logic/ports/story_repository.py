@@ -2,8 +2,8 @@ import uuid
 from decimal import Decimal
 from typing import Any, Protocol
 
-from Backend.logic.domain.story import Story, StoryStatus
-from Backend.logic.domain.story_article_link import StoryArticleLink
+from Backend.Logic.domain.story import Story, StoryStatus
+from Backend.Logic.domain.story_article_link import StoryArticleLink
 
 
 class StoryRepository(Protocol):
