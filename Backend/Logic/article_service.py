@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from Backend.dal.models import Article
 from Backend.dal.models.base import utcnow
 from Backend.dal.repositories import ArticleRepository, ProviderRepository
-from Backend.logic.exceptions import NotFoundError
+from Backend.Logic.exceptions import NotFoundError
 
 
 class ArticleService:
