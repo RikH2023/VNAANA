@@ -1,0 +1,18 @@
+[importlinter]
+root_package = Backend
+
+[importlinter:contract:logic-cannot-depend-on-dal]
+name = Logic cannot depend on DAL
+type = forbidden
+source_modules =
+    Backend.Logic
+forbidden_modules =
+    Backend.dal
+
+[importlinter:contract:presentation-cannot-depend-on-dal]
+name = Presentation cannot depend on DAL
+type = forbidden
+source_modules =
+    Backend.Presentation
+forbidden_modules =
+    Backend.dal
