@@ -12,7 +12,6 @@ if TYPE_CHECKING:
     from Backend.dal.models.provider import Provider
     from Backend.dal.models.story_article import StoryArticle
 
-
 class Article(Base):
     __tablename__ = "articles"
 
