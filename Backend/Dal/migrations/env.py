@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, pool
 
 from Backend.Dal.models.base import Base
 
-from Backend.Dal import models 
+from Backend.Dal import models
 
 
 config = context.config

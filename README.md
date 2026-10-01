@@ -38,10 +38,13 @@ table and column names must match it.
 Run everything from the `VNAANA` folder (not from inside `Backend`), so the
 `Backend.` imports and the `.env` file are found:
 
-```bash
-python -m venv .venv && .venv\Scripts\Activate.ps1
+```powershell
+.venv\Scripts\Activate.ps1
+
 pip install -r requirements.txt
-cp .env.example .env          # set DATABASE_URL to the existing database
+python -m alembic current
+python -m alembic upgrade head
+
 uvicorn Backend.main:app --reload
 ```
 
