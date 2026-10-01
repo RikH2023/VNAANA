@@ -1,7 +1,8 @@
 import uuid
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from Backend.dal.models import Article
@@ -43,6 +44,32 @@ class ArticleRepository:
         self.db.add(article)
         self.db.flush()
         return article
+
+    def ingest(self, **fields: Any) -> tuple[Article, bool]:
+        """Atomically insert or refresh a canonical URL, preserving its identity.
+
+        A conflicting insert keeps the existing id and first_seen_at. Comparing
+        the returned id with our candidate distinguishes creation from refresh.
+        The caller owns the transaction and commit.
+        """
+        candidate_id = uuid.uuid4()
+        stmt = insert(Article).values(**{**fields, "id": candidate_id})
+        refresh_fields = (
+            "provider_id", "title", "description", "author", "language", "published_at"
+        )
+        changes = {
+            key: stmt.excluded[key]
+            for key in refresh_fields
+            if fields.get(key) is not None
+        }
+        changes["last_seen_at"] = func.now()
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[Article.canonical_url], set_=changes
+        ).returning(Article)
+        article = self.db.scalars(
+            stmt, execution_options={"populate_existing": True}
+        ).one()
+        return article, article.id == candidate_id
 
     def update(self, article: Article, **fields: Any) -> Article:
         for key, value in fields.items():

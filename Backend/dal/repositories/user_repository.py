@@ -1,10 +1,10 @@
 import uuid
 from typing import Any
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from Backend.dal.models import EngagementEvent, User, UserTag
+from Backend.dal.models import User, UserTag
 
 
 class UserRepository:
@@ -27,13 +27,7 @@ class UserRepository:
         return user
 
     def delete(self, user: User) -> None:
-        """Hard delete (right to erasure). Removes the user's events and tags too.
-
-        Done explicitly so it doesn't depend on which ON DELETE rules the
-        database was created with.
-        """
-        self.db.execute(delete(EngagementEvent).where(EngagementEvent.user_id == user.id))
-        self.db.execute(delete(UserTag).where(UserTag.user_id == user.id))
+        """Delete the user and tags; the database nulls retained events' user_id."""
         self.db.delete(user)
         self.db.flush()
 

@@ -4,7 +4,6 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from Backend.dal.models import Article
-from Backend.dal.models.base import utcnow
 from Backend.dal.repositories import ArticleRepository, ProviderRepository
 from Backend.logic.exceptions import NotFoundError
 
@@ -43,16 +42,7 @@ class ArticleService:
             raise NotFoundError("Provider", data["provider_id"])
 
         data["canonical_url"] = data["canonical_url"].strip()
-        existing = self.articles.get_by_canonical_url(data["canonical_url"])
-
-        if existing is None:
-            article = self.articles.add(**data)
-            created = True
-        else:
-            # Never overwrite a known value with an empty one.
-            changes = {k: v for k, v in data.items() if v is not None and k != "canonical_url"}
-            article = self.articles.update(existing, **changes, last_seen_at=utcnow())
-            created = False
+        article, created = self.articles.ingest(**data)
 
         self.db.commit()
         return article, created
