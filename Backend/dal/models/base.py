@@ -5,6 +5,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 class Base(DeclarativeBase):
     """Models map onto existing tables (created by the DB owner, not by this API)."""
+    pass
 
 
 def utcnow() -> datetime:

@@ -3,15 +3,15 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric
+from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, func, false
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from Backend.dal.models.base import Base, utcnow
+from Backend.Dal.models.base import Base
 
 if TYPE_CHECKING:
-    from Backend.dal.models.article import Article
-    from Backend.dal.models.story import Story
+    from Backend.Dal.models.article import Article
+    from Backend.Dal.models.story import Story
 
 
 class StoryArticle(Base):
@@ -20,15 +20,15 @@ class StoryArticle(Base):
     __tablename__ = "story_articles"
 
     story_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stories.id"), primary_key=True
+        UUID(as_uuid=True), ForeignKey("stories.id", ondelete="CASCADE"), primary_key=True
     )
     article_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("articles.id"), primary_key=True
+        UUID(as_uuid=True), ForeignKey("articles.id", ondelete="CASCADE"), primary_key=True
     )
     similarity_score: Mapped[Decimal | None] = mapped_column(Numeric)
-    is_primary: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_primary: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=false())
     added_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, default=utcnow
+        DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
     story: Mapped["Story"] = relationship(back_populates="articles")

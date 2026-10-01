@@ -1,7 +1,7 @@
 import uuid
 from typing import Any
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from Backend.dal.models import (
