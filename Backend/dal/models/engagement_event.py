@@ -6,7 +6,7 @@ from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 
 class EngagementEvent(Base):

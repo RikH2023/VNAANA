@@ -6,11 +6,11 @@ from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 if TYPE_CHECKING:
-    from Backend.dal.models.provider import Provider
-    from Backend.dal.models.story_article import StoryArticle
+    from Backend.Dal.models.provider import Provider
+    from Backend.Dal.models.story_article import StoryArticle
 
 class Article(Base):
     __tablename__ = "articles"

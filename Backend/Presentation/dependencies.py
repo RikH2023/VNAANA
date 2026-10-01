@@ -4,10 +4,10 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from Backend.dal.database import get_db
-from Backend.logic.article_service import ArticleService
-from Backend.logic.story_service import StoryService
-from Backend.logic.user_service import UserService
+from Backend.Dal.database import get_db
+from Backend.Logic.article_service import ArticleService
+from Backend.Logic.story_service import StoryService
+from Backend.Logic.user_service import UserService
 
 DbSession = Annotated[Session, Depends(get_db)]
 

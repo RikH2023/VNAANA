@@ -1,4 +1,3 @@
-
 ## Supabase database setup
 
 The project uses a PostgreSQL database hosted by Supabase. SQLAlchemy handles database access, while Alembic manages changes to the database structure.
@@ -7,9 +6,11 @@ The project uses a PostgreSQL database hosted by Supabase. SQLAlchemy handles da
 
 Create .env file if it does not exist in the Backend/.env
 Add the connection URL that has been provided that has the following format:
+
 ```ini
 DATABASE_URL="postgresql+psycopg://postgres.PROJECT_REFERENCE:URL_ENCODED_PASSWORD@POOLER_HOST:5432/postgres?sslmode=require"
 ```
+
 The `.env` file is private and must not be committed.
 
 ### Install dependencies
@@ -19,14 +20,17 @@ From the project root, activate the virtual environment and install the project 
 ### Test the connection
 
 Run this command from the project root:
+
 ```powershell
 python -m alembic current
 ```
+
 A successful connection displays the current migration revision. Connection or authentication errors normally mean the URL, password, or pooler settings need to be checked.
 
 ### Synchronize the database
 
 After pulling new code, apply migrations that other developers have added:
+
 ```powershell
 python -m alembic upgrade head
 ```
@@ -45,6 +49,7 @@ When changing a table:
 ```powershell
 python -m alembic revision --autogenerate -m "describe the change"
 ```
+
 3. Review the generated file in `Backend/dal/migrations/versions`.
 4. Check that it does not contain unexpected table or column deletions.
 5. Commit both the model changes and migration file.
@@ -53,16 +58,17 @@ python -m alembic revision --autogenerate -m "describe the change"
 ```powershell
 python -m alembic upgrade head
 ```
+
 Coordinate database changes with the team so that two developers do not create conflicting migrations at the same time.
 
 ### Important files
 
 - `Backend/.env`: private database connection settings
-- `Backend/dal/database.py`: SQLAlchemy connection configuration
-- `Backend/dal/models/`: database models
-- `Backend/dal/models/base.py`: shared SQLAlchemy Base
-- `Backend/dal/migrations/`: Alembic configuration and migration history
-- `Backend/dal/migrations/versions/`: individual database changes
+- `Backend/Dal/database.py`: SQLAlchemy connection configuration
+- `Backend/Dal/models/`: database models
+- `Backend/Dal/models/base.py`: shared SQLAlchemy Base
+- `Backend/Dal/migrations/`: Alembic configuration and migration history
+- `Backend/Dal/migrations/versions/`: individual database changes
 - `alembic.ini`: Alembic project configuration
 
 Never commit passwords, completed connection URLs, service-role keys, or other Supabase secrets.

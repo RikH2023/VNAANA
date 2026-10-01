@@ -7,11 +7,11 @@ from sqlalchemy import DateTime, Enum, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 if TYPE_CHECKING:
-    from Backend.dal.models.story_article import StoryArticle
-    from Backend.dal.models.story_tag import StoryTag
+    from Backend.Dal.models.story_article import StoryArticle
+    from Backend.Dal.models.story_tag import StoryTag
 
 
 class StoryStatus(str, enum.Enum):

@@ -6,9 +6,9 @@ from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, pool
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
-from Backend.dal import models 
+from Backend.Dal import models 
 
 
 config = context.config

@@ -5,7 +5,7 @@ from sqlalchemy import CHAR, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 
 class Provider(Base):

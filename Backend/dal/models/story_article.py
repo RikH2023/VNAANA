@@ -7,11 +7,11 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, func, false
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 if TYPE_CHECKING:
-    from Backend.dal.models.article import Article
-    from Backend.dal.models.story import Story
+    from Backend.Dal.models.article import Article
+    from Backend.Dal.models.story import Story
 
 
 class StoryArticle(Base):

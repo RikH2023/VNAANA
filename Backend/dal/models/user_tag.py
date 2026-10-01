@@ -6,11 +6,11 @@ from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 if TYPE_CHECKING:
-    from Backend.dal.models.tag import Tag
-    from Backend.dal.models.user import User
+    from Backend.Dal.models.tag import Tag
+    from Backend.Dal.models.user import User
 
 
 class UserTag(Base):

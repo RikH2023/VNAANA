@@ -6,10 +6,10 @@ from sqlalchemy import Boolean, DateTime, String, false
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from Backend.dal.models.base import Base
+from Backend.Dal.models.base import Base
 
 if TYPE_CHECKING:
-    from Backend.dal.models.user_tag import UserTag
+    from Backend.Dal.models.user_tag import UserTag
 
 
 class User(Base):
