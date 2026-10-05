@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from Backend.dal.models import Tag as TagModel
+from Backend.Dal.models import Tag as TagModel
 from Backend.Logic.domain.tag import Tag
 from Backend.Logic.ports.tag_repository import (
     TagRepository as TagRepositoryPort,

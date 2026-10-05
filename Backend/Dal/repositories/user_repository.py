@@ -1,10 +1,10 @@
 import uuid
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
-from Backend.dal.models import (
+from Backend.Dal.models import (
     EngagementEvent as EngagementEventModel,
     User as UserModel,
     UserTag,
@@ -61,13 +61,6 @@ class UserRepository(UserRepositoryPort):
         return self._to_domain(user_model)
 
     def delete(self, user: User) -> None:
-        """Hard delete (right to erasure)."""
-
-        self.db.execute(
-            delete(EngagementEventModel).where(
-                EngagementEventModel.user_id == user.id
-            )
-        )
 
         self.db.execute(
             delete(UserTag).where(
@@ -82,8 +75,6 @@ class UserRepository(UserRepositoryPort):
 
         self.db.delete(user_model)
         self.db.flush()
-
-    # ---- user_tags ----
 
     def get_tag_ids(self, user_id: uuid.UUID) -> list[uuid.UUID]:
         stmt = select(UserTag.tag_id).where(

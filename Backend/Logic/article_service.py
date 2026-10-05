@@ -2,13 +2,66 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-from Backend.Logic.domain.article import Article
 from Backend.Logic.exceptions import NotFoundError
 from Backend.Logic.ports.article_repository import ArticleRepository
 from Backend.Logic.ports.provider_repository import ProviderRepository
+from Backend.Logic.domain.article import Article, RawArticle
 
 
 class ArticleService:
+    def ingest_article(
+        self,
+        articles: ArticleRepository,
+        providers: ProviderRepository,
+        raw_article: RawArticle,
+    ) -> tuple[Article, bool]:
+
+        provider_id = raw_article.provider_id
+
+        if providers.get(provider_id) is None:
+            raise NotFoundError("Provider", provider_id)
+
+        canonical_url = raw_article.url.strip()
+
+        existing = articles.get_by_canonical_url(canonical_url)
+
+        now = datetime.now(timezone.utc)
+
+        data = {
+            "provider_id": provider_id,
+            "canonical_url": canonical_url,
+            "title": raw_article.title,
+            "description": raw_article.content,
+            "author": raw_article.author,
+            "language": raw_article.language,
+            "published_at": raw_article.published_at,
+            "first_seen_at": now,
+            "last_seen_at": now,
+        }
+
+        if existing is None:
+            article = articles.add(**data)
+            created = True
+        else:
+            changes = {
+                key: value
+                for key, value in data.items()
+                if value is not None
+                and key not in {
+                    "canonical_url",
+                    "first_seen_at",
+                }
+            }
+
+            article = articles.update(
+                existing,
+                **changes,
+                last_seen_at=now,
+            )
+            created = False
+
+        return article, created
+    
     def list_articles(
         self,
         articles: ArticleRepository,

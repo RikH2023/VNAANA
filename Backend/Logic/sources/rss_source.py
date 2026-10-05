@@ -1,8 +1,9 @@
 import feedparser
+import asyncio
 
-from domain.article import RawArticle
-from domain.provider_source import ProviderSource
-from sources.news_source import NewsSource
+from Backend.Logic.domain.article import RawArticle
+from Backend.Logic.domain.provider_source import ProviderSource
+from Backend.Logic.sources.news_source import NewsSource
 
 
 class RSSSource(NewsSource):

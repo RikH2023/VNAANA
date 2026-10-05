@@ -9,11 +9,11 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import Session, configure_mappers
 from sqlalchemy.schema import CreateTable
 
-from Backend.dal.models import (
+from Backend.Dal.models import (
     Article, Base, EngagementEvent, Provider, Story,
     StoryArticle, StoryStatus, StoryTag, Tag, User, UserTag,
 )
-from Backend.dal.repositories import ArticleRepository, UserRepository
+from Backend.Dal.repositories import ArticleRepository, UserRepository
 
 
 @compiles(JSONB, "sqlite")

@@ -14,5 +14,6 @@ class ProviderSource:
     source_type: str
     url: str
     poll_interval_minutes: int
+    is_active: bool
 
     configuration: dict[str, Any]

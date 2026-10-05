@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Logic.domain.provider_source import ProviderSource
+from Backend.Logic.domain.provider_source import ProviderSource
 
 
 class ProviderSourceRepository(ABC):

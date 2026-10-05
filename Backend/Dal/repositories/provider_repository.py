@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from Backend.dal.models import Provider as ProviderModel
+from Backend.Dal.models import Provider as ProviderModel
 from Backend.Logic.domain.provider import Provider
 from Backend.Logic.ports.provider_repository import (
     ProviderRepository as ProviderRepositoryPort,
