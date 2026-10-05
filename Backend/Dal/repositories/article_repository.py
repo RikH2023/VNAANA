@@ -5,7 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from Backend.dal.models import Article as ArticleModel
+from Backend.Dal.models import Article as ArticleModel
 from Backend.Logic.domain.article import Article
 from Backend.Logic.ports.article_repository import ArticleRepository as ArticleRepositoryPort
 
