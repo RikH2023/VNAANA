@@ -1,10 +1,11 @@
+from datetime import datetime, timezone
+
 from Backend.Logic.domain.provider_source import ProviderSource
 from Backend.Logic.article_service import ArticleService
 from Backend.Logic.provider_source_service import ProviderSourceService
-from Backend.Logic.sources.news_source import NewsSource
 from Backend.Logic.ports.article_repository import ArticleRepository
 from Backend.Logic.ports.provider_repository import ProviderRepository
-from datetime import datetime, timezone
+from Backend.Logic.sources.news_source import NewsSource
 
 
 class NewsGatheringService:
@@ -24,9 +25,7 @@ class NewsGatheringService:
         self.source_handlers = source_handlers
 
     async def gather(self) -> None:
-        sources = (
-            await self.provider_source_service.get_active_sources()
-        )
+        sources = await self.provider_source_service.get_active_sources()
 
         for source in sources:
             await self._gather_source(source)
@@ -35,7 +34,6 @@ class NewsGatheringService:
         self,
         source: ProviderSource,
     ) -> None:
-
         handler = self.source_handlers.get(source.source_type)
 
         if handler is None:
@@ -43,10 +41,17 @@ class NewsGatheringService:
                 f"Unsupported source type: {source.source_type}"
             )
 
+        print(f"Fetching source: {source.name}")
+        print(f"URL: {source.url}")
+
         raw_articles = await handler.fetch(source)
 
+        print(f"Fetched {len(raw_articles)} articles")
+
         for raw_article in raw_articles:
-            self.article_service.ingest_article(
+            now = datetime.now(timezone.utc)
+
+            article, created = self.article_service.ingest_article(
                 self.article_repository,
                 self.provider_repository,
                 {
@@ -54,10 +59,16 @@ class NewsGatheringService:
                     "canonical_url": raw_article.url,
                     "title": raw_article.title,
                     "description": raw_article.content,
-                    "author": None,
-                    "language": None,
+                    "author": raw_article.author,
+                    "language": raw_article.language,
                     "published_at": raw_article.published_at,
-                    "first_seen_at": datetime.now(timezone.utc),
-                    "last_seen_at": datetime.now(timezone.utc),
+                    "first_seen_at": now,
+                    "last_seen_at": now,
                 },
+            )
+
+            action = "created" if created else "updated"
+
+            print(
+                f"{action}: {article.title}"
             )
