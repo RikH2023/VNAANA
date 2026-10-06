@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from Backend.dal.models import EngagementEvent as EngagementEventModel
+from Backend.Dal.models import EngagementEvent as EngagementEventModel
 from Backend.Logic.domain.engagement_event import EngagementEvent
 from Backend.Logic.ports.engagement_event_repository import (
     EngagementEventRepository as EngagementEventRepositoryPort,

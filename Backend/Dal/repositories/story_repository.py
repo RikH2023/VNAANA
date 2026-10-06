@@ -5,7 +5,7 @@ from typing import Any
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session, selectinload
 
-from Backend.dal.models import (
+from Backend.Dal.models import (
     Story as StoryModel,
     StoryArticle as StoryArticleModel,
     StoryStatus,
