@@ -1,5 +1,4 @@
 import uuid
-
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -14,10 +13,21 @@ class RawArticle:
     published_at: datetime | None
     provider_id: uuid.UUID
 
+
+@dataclass
+class ArticleProvider:
+    id: uuid.UUID
+    name: str
+    domain: str
+    country_code: str | None
+    reliability_status: str
+
+
 @dataclass
 class Article:
     id: uuid.UUID
     provider_id: uuid.UUID
+    provider: ArticleProvider
     canonical_url: str
     title: str
     description: str | None

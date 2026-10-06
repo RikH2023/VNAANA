@@ -1,4 +1,10 @@
-"""Wires Logic services to their dependencies per request."""
+"""FastAPI dependency wiring.
+
+Presentation owns the request-scoped database session and constructs the
+application services with their repository dependencies.
+
+Routers only depend on services.
+"""
 
 from typing import Annotated
 
@@ -6,101 +12,52 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from Backend.database import get_db
+
+from Backend.Dal.repositories.article_repository import (
+    ArticleRepository as DalArticleRepository,
+)
+from Backend.Dal.repositories.engagement_event_repository import (
+    EngagementEventRepository as DalEngagementEventRepository,
+)
+from Backend.Dal.repositories.provider_repository import (
+    ProviderRepository as DalProviderRepository,
+)
+from Backend.Dal.repositories.story_repository import (
+    StoryRepository as DalStoryRepository,
+)
+from Backend.Dal.repositories.tag_repository import (
+    TagRepository as DalTagRepository,
+)
+from Backend.Dal.repositories.user_repository import (
+    UserRepository as DalUserRepository,
+)
+
 from Backend.Logic.article_service import ArticleService
 from Backend.Logic.story_service import StoryService
 from Backend.Logic.user_service import UserService
-from Backend.Logic.ports.article_repository import ArticleRepository
-from Backend.Logic.ports.engagement_event_repository import (
-    EngagementEventRepository,
-)
-from Backend.Logic.ports.provider_repository import ProviderRepository
-from Backend.Logic.ports.story_repository import StoryRepository
-from Backend.Logic.ports.tag_repository import TagRepository
-from Backend.Logic.ports.user_repository import UserRepository
 
 
-DbSession = Annotated[Session, Depends(get_db)]
+# ---------------------------------------------------------------------------
+# Database
+# ---------------------------------------------------------------------------
+
+DbSession = Annotated[
+    Session,
+    Depends(get_db),
+]
 
 
-def get_article_repository(db: DbSession) -> ArticleRepository:
-    raise RuntimeError(
-        "ArticleRepository dependency has not been configured"
-    )
+# ---------------------------------------------------------------------------
+# Article
+# ---------------------------------------------------------------------------
 
-
-def get_story_repository(db: DbSession) -> StoryRepository:
-    raise RuntimeError(
-        "StoryRepository dependency has not been configured"
-    )
-
-
-def get_tag_repository(db: DbSession) -> TagRepository:
-    raise RuntimeError(
-        "TagRepository dependency has not been configured"
-    )
-
-
-def get_user_repository(db: DbSession) -> UserRepository:
-    raise RuntimeError(
-        "UserRepository dependency has not been configured"
-    )
-
-
-def get_engagement_event_repository(
+def get_article_service(
     db: DbSession,
-) -> EngagementEventRepository:
-    raise RuntimeError(
-        "EngagementEventRepository dependency has not been configured"
+) -> ArticleService:
+    return ArticleService(
+        articles=DalArticleRepository(db),
+        providers=DalProviderRepository(db),
     )
-
-
-def get_provider_repository(db: DbSession) -> ProviderRepository:
-    raise RuntimeError(
-        "ProviderRepository dependency has not been configured"
-    )
-
-
-ArticleRepositoryDep = Annotated[
-    ArticleRepository,
-    Depends(get_article_repository),
-]
-
-StoryRepositoryDep = Annotated[
-    StoryRepository,
-    Depends(get_story_repository),
-]
-
-TagRepositoryDep = Annotated[
-    TagRepository,
-    Depends(get_tag_repository),
-]
-
-UserRepositoryDep = Annotated[
-    UserRepository,
-    Depends(get_user_repository),
-]
-
-EngagementEventRepositoryDep = Annotated[
-    EngagementEventRepository,
-    Depends(get_engagement_event_repository),
-]
-
-ProviderRepositoryDep = Annotated[
-    ProviderRepository,
-    Depends(get_provider_repository),
-]
-
-
-def get_article_service() -> ArticleService:
-    return ArticleService()
-
-
-def get_story_service() -> StoryService:
-    return StoryService()
-
-
-def get_user_service() -> UserService:
-    return UserService()
 
 
 ArticleServiceDep = Annotated[
@@ -108,10 +65,42 @@ ArticleServiceDep = Annotated[
     Depends(get_article_service),
 ]
 
+
+# ---------------------------------------------------------------------------
+# Story
+# ---------------------------------------------------------------------------
+
+def get_story_service(
+    db: DbSession,
+) -> StoryService:
+    return StoryService(
+        stories=DalStoryRepository(db),
+        articles=DalArticleRepository(db),
+        tags=DalTagRepository(db),
+    )
+
+
 StoryServiceDep = Annotated[
     StoryService,
     Depends(get_story_service),
 ]
+
+
+# ---------------------------------------------------------------------------
+# User
+# ---------------------------------------------------------------------------
+
+def get_user_service(
+    db: DbSession,
+) -> UserService:
+    return UserService(
+        users=DalUserRepository(db),
+        tags=DalTagRepository(db),
+        events=DalEngagementEventRepository(db),
+        stories=DalStoryRepository(db),
+        articles=DalArticleRepository(db),
+    )
+
 
 UserServiceDep = Annotated[
     UserService,
