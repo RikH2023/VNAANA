@@ -1,16 +1,27 @@
 import uuid
-from typing import Any, Protocol
+from abc import ABC, abstractmethod
+from typing import Any
 
 from Backend.Logic.domain.article import Article
 
 
-class ArticleRepository(Protocol):
-    def get(self, article_id: uuid.UUID) -> Article | None:
+class ArticleRepository(ABC):
+
+    @abstractmethod
+    def get(
+        self,
+        article_id: uuid.UUID,
+    ) -> Article | None:
         ...
 
-    def get_by_canonical_url(self, canonical_url: str) -> Article | None:
+    @abstractmethod
+    def get_by_canonical_url(
+        self,
+        canonical_url: str,
+    ) -> Article | None:
         ...
 
+    @abstractmethod
     def list(
         self,
         *,
@@ -21,8 +32,24 @@ class ArticleRepository(Protocol):
     ) -> list[Article]:
         ...
 
-    def add(self, **fields: Any) -> Article:
+    @abstractmethod
+    def add(
+        self,
+        **fields: Any,
+    ) -> Article:
         ...
 
-    def update(self, article: Article, **fields: Any) -> Article:
+    @abstractmethod
+    def ingest(
+        self,
+        **fields: Any,
+    ) -> tuple[Article, bool]:
+        ...
+
+    @abstractmethod
+    def update(
+        self,
+        article: Article,
+        **fields: Any,
+    ) -> Article:
         ...

@@ -5,12 +5,7 @@ import uuid
 from fastapi import APIRouter, Query, status
 
 from Backend.Logic.domain.story import StoryStatus
-from Backend.Presentation.dependencies import (
-    ArticleRepositoryDep,
-    StoryRepositoryDep,
-    StoryServiceDep,
-    TagRepositoryDep,
-)
+from Backend.Presentation.dependencies import StoryServiceDep
 from Backend.Presentation.schemas.stories import (
     StoryArticleLink,
     StoryArticleRead,
@@ -27,7 +22,6 @@ router = APIRouter(prefix="/stories", tags=["stories"])
 @router.get("", response_model=list[StoryListItem])
 def list_stories(
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
     status_filter: StoryStatus | None = Query(
         StoryStatus.published,
         alias="status",
@@ -36,9 +30,7 @@ def list_stories(
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
-    # Default to published so a frontend never shows drafts by accident.
     return service.list_stories(
-        stories,
         status=status_filter,
         tag_id=tag_id,
         limit=limit,
@@ -54,10 +46,8 @@ def list_stories(
 def create_story(
     body: StoryCreate,
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
 ):
     return service.create_story(
-        stories,
         body.model_dump(),
     )
 
@@ -66,12 +56,8 @@ def create_story(
 def get_story(
     story_id: uuid.UUID,
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
 ):
-    return service.get_story(
-        stories,
-        story_id,
-    )
+    return service.get_story(story_id)
 
 
 @router.patch("/{story_id}", response_model=StoryRead)
@@ -79,10 +65,8 @@ def update_story(
     story_id: uuid.UUID,
     body: StoryUpdate,
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
 ):
     return service.update_story(
-        stories,
         story_id,
         body.model_dump(exclude_unset=True),
     )
@@ -93,8 +77,6 @@ def set_story_tags(
     story_id: uuid.UUID,
     body: StoryTagsUpdate,
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
-    tags: TagRepositoryDep,
 ):
     tag_data = {
         tag.tag_id: tag.relevance_score
@@ -102,8 +84,6 @@ def set_story_tags(
     }
 
     return service.set_tags(
-        stories,
-        tags,
         story_id,
         tag_data,
     )
@@ -118,12 +98,8 @@ def link_article(
     story_id: uuid.UUID,
     body: StoryArticleLink,
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
-    articles: ArticleRepositoryDep,
 ):
     return service.link_article(
-        stories,
-        articles,
         story_id,
         body.article_id,
         body.similarity_score,
@@ -139,10 +115,8 @@ def unlink_article(
     story_id: uuid.UUID,
     article_id: uuid.UUID,
     service: StoryServiceDep,
-    stories: StoryRepositoryDep,
 ):
     service.unlink_article(
-        stories,
         story_id,
         article_id,
     )

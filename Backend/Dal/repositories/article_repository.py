@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from Backend.Dal.models import Article as ArticleModel
-from Backend.Logic.domain.article import Article
+from Backend.Logic.domain.article import (Article, ArticleProvider)
 from Backend.Logic.ports.article_repository import (
     ArticleRepository as ArticleRepositoryPort,
 )
@@ -18,10 +18,18 @@ class ArticleRepository(ArticleRepositoryPort):
 
     @staticmethod
     def _to_domain(article_model: ArticleModel) -> Article:
-        """Convert a DAL/SQLAlchemy model into a Logic domain object."""
+        provider = article_model.provider
+
         return Article(
             id=article_model.id,
             provider_id=article_model.provider_id,
+            provider=ArticleProvider(
+                id=provider.id,
+                name=provider.name,
+                domain=provider.domain,
+                country_code=provider.country_code,
+                reliability_status=provider.reliability_status,
+            ),
             canonical_url=article_model.canonical_url,
             title=article_model.title,
             description=article_model.description,
