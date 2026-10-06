@@ -58,7 +58,7 @@ class NewsGatheringService:
                     "provider_id": raw_article.provider_id,
                     "canonical_url": raw_article.url,
                     "title": raw_article.title,
-                    "description": raw_article.content,
+                    "description": raw_article.description,
                     "author": raw_article.author,
                     "language": raw_article.language,
                     "published_at": raw_article.published_at,

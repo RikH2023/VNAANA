@@ -8,7 +8,7 @@ from datetime import datetime
 class RawArticle:
     title: str
     url: str
-    content: str | None
+    description: str | None
     author: str | None
     language: str | None
     published_at: datetime | None

@@ -22,7 +22,9 @@ class RSSSource(NewsSource):
                 RawArticle(
                     title=entry.get("title", ""),
                     url=entry.get("link", ""),
-                    content=entry.get("summary"),
+                    description=entry.get("summary"),
+                    author=entry.get("author"),
+                    language=entry.get("language"),
                     published_at=None,
                     provider_id=source.provider_id,
                 )
