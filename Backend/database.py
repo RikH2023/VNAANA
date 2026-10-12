@@ -28,6 +28,7 @@ def get_db() -> Iterator[Session]:
 
     try:
         yield db
+        db.commit()
     except Exception:
         db.rollback()
         raise
