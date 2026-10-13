@@ -7,6 +7,9 @@ from Backend.Dal.repositories.provider_repository import ProviderRepository
 from Backend.Dal.repositories.mock_provider_source_repository import (
     MockProviderSourceRepository,
 )
+from Backend.Logic.article_normalization_service import (
+    ArticleNormalizationService,
+)
 from Backend.Logic.article_service import ArticleService
 from Backend.Logic.news_gathering_service import NewsGatheringService
 from Backend.Logic.provider_source_service import ProviderSourceService
@@ -71,15 +74,21 @@ async def main() -> None:
                     source_repository
                 )
 
+                
                 news_gathering_service = NewsGatheringService(
                     provider_source_service=provider_source_service,
-                    article_service=ArticleService(),
+                    article_service=ArticleService(
+                        articles=article_repository,
+                        providers=provider_repository,
+                    ),
                     article_repository=article_repository,
                     provider_repository=provider_repository,
                     source_handlers={
                         "rss": RSSSource(),
                     },
+                    article_normalization_service=ArticleNormalizationService(),
                 )
+
 
                 await news_gathering_service.gather()
 

@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+from Backend.Logic.article_normalization_service import ArticleNormalizationService
 from Backend.Logic.domain.provider_source import ProviderSource
 from Backend.Logic.article_service import ArticleService
 from Backend.Logic.provider_source_service import ProviderSourceService
@@ -17,7 +18,9 @@ class NewsGatheringService:
         article_repository: ArticleRepository,
         provider_repository: ProviderRepository,
         source_handlers: dict[str, NewsSource],
+        article_normalization_service: ArticleNormalizationService,
     ):
+        self.article_normalization_service = article_normalization_service
         self.provider_source_service = provider_source_service
         self.article_service = article_service
         self.article_repository = article_repository
@@ -49,26 +52,20 @@ class NewsGatheringService:
         print(f"Fetched {len(raw_articles)} articles")
 
         for raw_article in raw_articles:
-            now = datetime.now(timezone.utc)
+            try:
+                article_data = self.article_normalization_service.normalize(
+                    raw_article,
+                    provider_id=source.provider_id,
+                )
 
-            article, created = self.article_service.ingest_article(
-                self.article_repository,
-                self.provider_repository,
-                {
-                    "provider_id": raw_article.provider_id,
-                    "canonical_url": raw_article.url,
-                    "title": raw_article.title,
-                    "description": raw_article.description,
-                    "author": raw_article.author,
-                    "language": raw_article.language,
-                    "published_at": raw_article.published_at,
-                    "first_seen_at": now,
-                    "last_seen_at": now,
-                },
-            )
+                article, created = self.article_service.ingest_article(
+                    article_data
+                )
 
-            action = "created" if created else "updated"
+                action = "created" if created else "updated"
+                print(f"{action}: {article.title}")
 
-            print(
-                f"{action}: {article.title}"
-            )
+            except (ValueError, TypeError) as exc:
+                print(
+                    f"Skipping invalid article from {source.name}: {exc}"
+                )

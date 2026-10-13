@@ -1,66 +1,72 @@
 from Backend.database import SessionLocal
 from Backend.Dal.mock_data.provider_sources import MOCK_PROVIDER_SOURCES
 from Backend.Dal.repositories.provider_repository import ProviderRepository
-
+from Backend.Logic.article_normalization_service import (
+    ArticleNormalizationService,
+)
 
 def main() -> None:
-    print("1. Starting seed script")
+    print("1. Starting provider seed script")
 
-    print("2. Creating database session")
+    # One provider may have multiple RSS category feeds.
+    providers = {
+        source.provider_id: source
+        for source in MOCK_PROVIDER_SOURCES
+    }
+
+    print(f"2. Found {len(providers)} unique providers")
+
     db = SessionLocal()
 
+    created = 0
+    skipped = 0
+
     try:
-        print("3. Creating repository")
         repository = ProviderRepository(db)
 
-        print("4. Loading mock sources")
-        nos_source = next(
-            source
-            for source in MOCK_PROVIDER_SOURCES
-            if source.provider_name == "NOS"
-        )
-
-        print(f"5. Found source: {nos_source.name}")
-        print(f"   Provider ID: {nos_source.provider_id}")
-
-        print("6. Checking provider in database")
-        existing = repository.get(nos_source.provider_id)
-
-        print("7. Provider lookup finished")
-
-        if existing is not None:
+        for provider_id, source in providers.items():
             print(
-                f"Provider already exists: "
-                f"{existing.name} ({existing.domain})"
+                f"\nChecking: {source.provider_name} "
+                f"({source.provider_domain})"
             )
-            return
 
-        print("8. Creating provider")
+            existing = repository.get(provider_id)
 
-        provider = repository.add(
-            id=nos_source.provider_id,
-            name=nos_source.provider_name,
-            domain=nos_source.provider_domain,
-            country_code="NL",
-            reliability_status="unknown",
-        )
+            if existing is not None:
+                print(
+                    f"  SKIPPED: Already exists "
+                    f"({existing.name})"
+                )
+                skipped += 1
+                continue
 
-        print("9. Committing transaction")
+            provider = repository.add(
+                id=source.provider_id,
+                name=source.provider_name,
+                domain=source.provider_domain,
+                country_code="NL",
+                reliability_status="unknown",
+            )
+
+            print(f"  CREATED: {provider.name}")
+            created += 1
+
         db.commit()
 
-        print(
-            f"Created provider: "
-            f"{provider.name} ({provider.domain})"
-        )
-        print(f"Provider ID: {provider.id}")
+        print("\n" + "=" * 50)
+        print("PROVIDER SEED SUMMARY")
+        print("=" * 50)
+        print(f"Total unique providers: {len(providers)}")
+        print(f"Created:               {created}")
+        print(f"Already existed:       {skipped}")
+        print("Database transaction committed successfully.")
 
     except Exception:
-        print("ERROR — rolling back")
+        print("ERROR — rolling back transaction")
         db.rollback()
         raise
 
     finally:
-        print("10. Closing database")
         db.close()
 
 
