@@ -1,12 +1,15 @@
+import { PartDots } from '../CarouselControls'
 import { PostCarousel } from '../PostCarousel'
 import { PostHeader } from '../PostHeader'
 import { ReactionBar } from '../ReactionBar'
-import { StepTabs } from '../StepTabs'
 import { ReadMorePart, WhatHappenedPart, WhyPart } from '../parts/Parts'
-import styles from './Original.module.css'
+import styles from './InstagramStyle.module.css'
 
-/* 1. Original: header, 3-part carousel, step tabs, reactions. */
-export function OriginalLayout() {
+/*
+ * 1. Instagram Style: top bar with labels and a ⋯ menu ("Not interested"),
+ * 3-part carousel, progress dots, then like / share / Ask Nova.
+ */
+export function InstagramStyleLayout() {
   return (
     <>
       <PostHeader />
@@ -17,9 +20,11 @@ export function OriginalLayout() {
         partPadding={{ top: 52 }}
         parts={[<WhatHappenedPart />, <WhyPart density="full" />, <ReadMorePart density="full" />]}
       />
-      <StepTabs />
+      <div className={styles.dots}>
+        <PartDots />
+      </div>
       <footer className={styles.footer}>
-        <ReactionBar kinds={['like', 'dislike', 'notInterested', 'share', 'save']} ask="pill" />
+        <ReactionBar kinds={['like', 'share']} likeIcon="heart" ask="pill" />
       </footer>
     </>
   )

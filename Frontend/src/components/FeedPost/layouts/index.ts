@@ -2,7 +2,7 @@ import type { ComponentType } from 'react'
 import { AnchorLedLayout } from './AnchorLed'
 import { HeadlineFirstLayout } from './HeadlineFirst'
 import { ImageFirstLayout } from './ImageFirst'
-import { OriginalLayout } from './Original'
+import { InstagramStyleLayout } from './InstagramStyle'
 import { PeekLayout } from './Peek'
 import { PosterLayout } from './Poster'
 import { SplitLayout } from './Split'
@@ -20,7 +20,7 @@ type PostLayout = {
  * To add one: create <Name>.tsx in this folder and add it here.
  */
 export const POST_LAYOUTS = {
-  original: { label: 'Original', component: OriginalLayout },
+  instagramStyle: { label: 'Instagram Style', component: InstagramStyleLayout },
   imageFirst: { label: 'Image first', component: ImageFirstLayout },
   headlineFirst: { label: 'Headline first', component: HeadlineFirstLayout },
   poster: { label: 'Poster', component: PosterLayout },
@@ -31,7 +31,7 @@ export const POST_LAYOUTS = {
 
 export type PostLayoutKey = keyof typeof POST_LAYOUTS
 
-export const DEFAULT_LAYOUT: PostLayoutKey = 'original'
+export const DEFAULT_LAYOUT: PostLayoutKey = 'instagramStyle'
 
 export function isPostLayoutKey(value: unknown): value is PostLayoutKey {
   return typeof value === 'string' && value in POST_LAYOUTS

@@ -61,12 +61,12 @@ App
 │  ├─ LayoutSwitcher
 │  ├─ BriefingCard
 │  └─ FeedPost × 3
-│     └─ <selected layout>       e.g. OriginalLayout
-│        ├─ PostHeader pieces    (Byline, TopicPill, LocationPill, TagPill, MoreButton)
+│     └─ <selected layout>       e.g. InstagramStyleLayout
+│        ├─ PostHeader pieces    (Byline, TopicPill, LocationPill, MoreButton, MoreMenu)
 │        ├─ PostCarousel         (parts: WhatHappenedPart / StoryImage, WhyPart, ReadMorePart)
 │        │  ├─ ReadMorePart      └─ NovaChatLog + NovaComposer (the Ask Nova chat)
 │        │  └─ CarouselArrows, CounterPill
-│        ├─ StepTabs / PartDots
+│        ├─ PartDots             (progress dots; Instagram Style has a ⋯ MoreMenu with "Not interested")
 │        └─ ReactionBar          (ActionButton, AskNovaButton, AskNovaInput)
 ```
 
@@ -86,7 +86,7 @@ The fonts are Bricolage Grotesque for headlines and Instrument Sans for everythi
 
 ## Post layouts
 
-The switcher above the feed changes every post between 7 layouts: Original, Image first, Headline first, Poster, Split, Peek and Anchor-led. Your choice is saved in `localStorage` under `vnaana.postLayout`.
+The switcher above the feed changes every post between 7 layouts: Instagram Style (the default), Image first, Headline first, Poster, Split, Peek and Anchor-led. Your choice is saved in `localStorage` under `vnaana.postLayout`.
 
 ### Adding a new layout
 

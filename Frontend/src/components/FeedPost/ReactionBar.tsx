@@ -1,19 +1,32 @@
 import { useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
-import { Bookmark, Check, EyeOff, SendHorizontal, Share2, Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { Bookmark, Check, EyeOff, Heart, SendHorizontal, Share2, Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { usePost } from './PostContext'
 import styles from './ReactionBar.module.css'
 
 export type ActionKind = 'like' | 'dislike' | 'notInterested' | 'share' | 'save'
 type ButtonVariant = 'icon' | 'labelled' | 'floating'
+type LikeIcon = 'thumb' | 'heart'
+
+type ActionButtonProps = {
+  kind: ActionKind
+  variant?: ButtonVariant
+  /** Thumbs-up (default) or a heart for the like button */
+  likeIcon?: LikeIcon
+}
 
 /* One reaction button. Reads its state from the post, so it can be placed anywhere. */
-export function ActionButton({ kind, variant = 'icon' }: { kind: ActionKind; variant?: ButtonVariant }) {
+export function ActionButton({ kind, variant = 'icon', likeIcon = 'thumb' }: ActionButtonProps) {
   const { actions } = usePost()
 
   const config: Record<ActionKind, { label: string; Icon: LucideIcon; onClick: () => void; pressed?: boolean }> = {
-    like: { label: 'Like', Icon: ThumbsUp, onClick: actions.toggleLike, pressed: actions.liked },
+    like: {
+      label: 'Like',
+      Icon: likeIcon === 'heart' ? Heart : ThumbsUp,
+      onClick: actions.toggleLike,
+      pressed: actions.liked,
+    },
     dislike: { label: 'Dislike', Icon: ThumbsDown, onClick: actions.toggleDislike, pressed: actions.disliked },
     notInterested: { label: variant === 'labelled' ? 'Not for me' : 'Not interested', Icon: EyeOff, onClick: actions.hide },
     share: {
@@ -98,6 +111,7 @@ export function AskNovaInput({ placeholder, fallbackQuestion }: { placeholder: s
 type ReactionBarProps = {
   kinds: ActionKind[]
   variant?: ButtonVariant
+  likeIcon?: LikeIcon
   ask?: AskVariant | null
   /** Anything to show at the end of the row instead of / next to Ask Nova (e.g. dots). */
   trailing?: ReactNode
@@ -105,13 +119,13 @@ type ReactionBarProps = {
 }
 
 /* A row (or column, for "floating") of reaction buttons with an optional Ask Nova button. */
-export function ReactionBar({ kinds, variant = 'icon', ask = 'pill', trailing, className = '' }: ReactionBarProps) {
+export function ReactionBar({ kinds, variant = 'icon', likeIcon, ask = 'pill', trailing, className = '' }: ReactionBarProps) {
   const floating = variant === 'floating'
   return (
     <div className={`${styles.bar} ${floating ? styles.column : ''} ${className}`} role="group" aria-label="Reactions">
       {floating && ask && <AskNovaButton variant={ask} />}
       {kinds.map((kind) => (
-        <ActionButton key={kind} kind={kind} variant={variant} />
+        <ActionButton key={kind} kind={kind} variant={variant} likeIcon={likeIcon} />
       ))}
       {(trailing || (!floating && ask)) && (
         <div className={styles.end}>

@@ -1,8 +1,103 @@
+/*
+ * Instagram Style layout top bar: byline | labels | ⋯
+ * On narrow feeds the labels drop to their own line under the byline.
+ */
 .header {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
+  grid-template-areas: 'byline labels menu';
+  align-items: center;
+  gap: 8px 12px;
+  padding: 14px 10px 12px 20px;
+}
+
+.headerByline {
+  grid-area: byline;
+  min-width: 0;
+}
+
+.labels {
+  grid-area: labels;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.headerMenu {
+  grid-area: menu;
+}
+
+@container feed (max-width: 560px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'byline menu'
+      'labels labels';
+    padding-left: 16px;
+  }
+
+  .labels {
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- ⋯ menu ---------- */
+
+.menuRoot {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 240px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ui);
+  background: var(--surface);
+  box-shadow: 0 8px 28px rgba(14, 17, 22, 0.16);
+}
+
+.menuItem {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 16px 12px 14px 20px;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: left;
+  color: var(--ink);
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--surface-2);
+}
+
+.menuItem:focus-visible {
+  outline-offset: -3px;
+}
+
+.menuItem svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--muted);
+}
+
+.menuItemTitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.menuItemHint {
+  display: block;
+  font-size: var(--text-meta);
+  color: var(--muted);
 }
 
 .avatar {
@@ -44,16 +139,6 @@
   line-height: 1.45;
 }
 
-.location {
-  white-space: nowrap;
-}
-
-.location svg {
-  display: inline;
-  vertical-align: -2px;
-  margin-right: 2px;
-}
-
 .byline {
   display: flex;
   align-items: center;
@@ -76,34 +161,6 @@
 
 .onDark .verified {
   color: #fff;
-}
-
-.end {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: none;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 10px;
-  border-radius: var(--radius-pill);
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.forYou {
-  background: var(--foryou-bg);
-  color: var(--foryou-ink);
-}
-
-.dontMiss {
-  background: var(--broad-bg);
-  color: var(--broad-ink);
 }
 
 /* Non-interactive label pill (topic, location). Solid background so it reads on top of images too. */
@@ -134,10 +191,4 @@
 .iconButton:hover {
   background: var(--surface-2);
   color: var(--ink);
-}
-
-@media (max-width: 420px) {
-  .header {
-    padding-left: 16px;
-  }
 }
