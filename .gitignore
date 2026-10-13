@@ -218,3 +218,17 @@ __marimo__/
 .streamlit/secrets.toml
 
 *.docx
+
+# Node / React (Frontend)
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
