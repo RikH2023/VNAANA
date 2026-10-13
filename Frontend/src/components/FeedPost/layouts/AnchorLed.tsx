@@ -8,7 +8,7 @@ import { ReadMorePart, StoryImage, WhyPart } from '../parts/Parts'
 import shared from './shared.module.css'
 import styles from './AnchorLed.module.css'
 
-/* 7. Anchor-led: Nova explains why it picked the story before you see it. */
+/* 6. Anchor-led: Nova explains why it picked the story before you see it. */
 export function AnchorLedLayout() {
   const { story, titleId } = usePost()
   return (

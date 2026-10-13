@@ -3,6 +3,7 @@ import { PostCarousel } from '../PostCarousel'
 import { PostHeader } from '../PostHeader'
 import { ReactionBar } from '../ReactionBar'
 import { ReadMorePart, WhatHappenedPart, WhyPart } from '../parts/Parts'
+import shared from './shared.module.css'
 import styles from './InstagramStyle.module.css'
 
 /*
@@ -20,10 +21,10 @@ export function InstagramStyleLayout() {
         partPadding={{ top: 52 }}
         parts={[<WhatHappenedPart />, <WhyPart density="full" />, <ReadMorePart density="full" />]}
       />
-      <div className={styles.dots}>
+      <div className={shared.dotsRow}>
         <PartDots />
       </div>
-      <footer className={styles.footer}>
+      <footer className={shared.actionsFooter}>
         <ReactionBar kinds={['like', 'share']} likeIcon="heart" ask="pill" />
       </footer>
     </>

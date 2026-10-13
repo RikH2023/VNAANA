@@ -7,7 +7,7 @@ import { ReadMorePart, StoryImage, WhyPart } from '../parts/Parts'
 import shared from './shared.module.css'
 import styles from './Split.module.css'
 
-/* 5. Split (desktop): carousel on the left, text and actions on the right. Stacks on narrow screens. */
+/* 4. Split (desktop): carousel on the left, text and actions on the right. Stacks on narrow screens. */
 export function SplitLayout() {
   const { story, titleId } = usePost()
   return (

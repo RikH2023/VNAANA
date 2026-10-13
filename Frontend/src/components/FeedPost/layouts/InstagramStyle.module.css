@@ -9,15 +9,3 @@
     --image-h: 220px;
   }
 }
-
-/* Progress dots, centred, where the step tabs used to be */
-.dots {
-  display: flex;
-  justify-content: center;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-}
-
-.footer {
-  padding: 2px 10px 8px 12px;
-}

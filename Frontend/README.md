@@ -86,7 +86,7 @@ The fonts are Bricolage Grotesque for headlines and Instrument Sans for everythi
 
 ## Post layouts
 
-The switcher above the feed changes every post between 7 layouts: Instagram Style (the default), Image first, Headline first, Poster, Split, Peek and Anchor-led. Your choice is saved in `localStorage` under `vnaana.postLayout`.
+The switcher above the feed changes every post between 6 layouts: Instagram Style (the default), Headline first, Poster, Split, Peek and Anchor-led. Your choice is saved in `localStorage` under `vnaana.postLayout`.
 
 ### Adding a new layout
 

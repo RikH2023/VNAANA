@@ -1,7 +1,6 @@
 import type { ComponentType } from 'react'
 import { AnchorLedLayout } from './AnchorLed'
 import { HeadlineFirstLayout } from './HeadlineFirst'
-import { ImageFirstLayout } from './ImageFirst'
 import { InstagramStyleLayout } from './InstagramStyle'
 import { PeekLayout } from './Peek'
 import { PosterLayout } from './Poster'
@@ -21,7 +20,6 @@ type PostLayout = {
  */
 export const POST_LAYOUTS = {
   instagramStyle: { label: 'Instagram Style', component: InstagramStyleLayout },
-  imageFirst: { label: 'Image first', component: ImageFirstLayout },
   headlineFirst: { label: 'Headline first', component: HeadlineFirstLayout },
   poster: { label: 'Poster', component: PosterLayout },
   split: { label: 'Split', component: SplitLayout, wide: true },

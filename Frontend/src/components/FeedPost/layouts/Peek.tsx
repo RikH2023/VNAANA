@@ -84,7 +84,7 @@ function PeekTrack() {
   )
 }
 
-/* 6. Peek carousel (LinkedIn document style). */
+/* 5. Peek carousel (LinkedIn document style). */
 export function PeekLayout() {
   const { story, titleId } = usePost()
   return (

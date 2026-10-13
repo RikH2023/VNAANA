@@ -65,6 +65,18 @@
   padding: 8px 10px 10px 12px;
 }
 
+/* Instagram Style + Headline first: centred progress dots, then heart / share / Ask Nova */
+.dotsRow {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.actionsFooter {
+  padding: 2px 10px 8px 12px;
+}
+
 .footerSpread {
   composes: footer;
   justify-content: space-between;

@@ -9,7 +9,7 @@ import styles from './Poster.module.css'
 
 const HINTS = ['Swipe for why it matters →', 'Swipe for the full story →', '← Back to the story']
 
-/* 4. Full-bleed poster (Reels / Stories): the image fills a tall card. */
+/* 3. Full-bleed poster (Reels / Stories): the image fills a tall card. */
 export function PosterLayout() {
   const { story, carousel, titleId } = usePost()
 
