@@ -9,6 +9,7 @@ from Backend.Dal.models.provider import Provider
 from Backend.Dal.models.article import Article
 from Backend.Dal.models.story_article import StoryArticle
 from Backend.Dal.models.engagement_event import EngagementEvent
+from Backend.Dal.models.event_weight import EventWeight
 
 __all__ = [
     "Base",
@@ -22,4 +23,5 @@ __all__ = [
     "Article",
     "StoryArticle",
     "EngagementEvent",
+    "EventWeight",
 ]

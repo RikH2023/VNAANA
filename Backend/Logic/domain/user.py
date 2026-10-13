@@ -13,3 +13,6 @@ class User:
     preferences: dict[str, Any] | None
     analytics_consent: bool
     consent_updated_at: datetime | None
+    auth_provider: str
+    auth_subject: str
+    affinity_updated_at: datetime | None

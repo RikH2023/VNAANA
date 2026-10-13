@@ -13,5 +13,6 @@ class EngagementEvent:
     article_id: uuid.UUID | None
     event_type: str
     occurred_at: datetime
+    ingested_at: datetime
     active_duration_ms: int | None
     event_metadata: dict[str, Any] | None

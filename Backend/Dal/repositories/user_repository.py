@@ -1,14 +1,14 @@
 import uuid
 from typing import Any
 
-from sqlalchemy import select, delete
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from Backend.Dal.models import (
-    EngagementEvent as EngagementEventModel,
     User as UserModel,
     UserTag,
 )
+from Backend.Dal.models.base import utcnow
 from Backend.Logic.domain.user import User
 from Backend.Logic.ports.user_repository import (
     UserRepository as UserRepositoryPort,
@@ -29,6 +29,9 @@ class UserRepository(UserRepositoryPort):
             preferences=user.preferences,
             analytics_consent=user.analytics_consent,
             consent_updated_at=user.consent_updated_at,
+            auth_provider=user.auth_provider,
+            auth_subject=user.auth_subject,
+            affinity_updated_at=user.affinity_updated_at,
         )
 
     def get(self, user_id: uuid.UUID) -> User | None:
@@ -61,13 +64,6 @@ class UserRepository(UserRepositoryPort):
         return self._to_domain(user_model)
 
     def delete(self, user: User) -> None:
-
-        self.db.execute(
-            delete(UserTag).where(
-                UserTag.user_id == user.id
-            )
-        )
-
         user_model = self.db.get(UserModel, user.id)
 
         if user_model is None:
@@ -78,7 +74,8 @@ class UserRepository(UserRepositoryPort):
 
     def get_tag_ids(self, user_id: uuid.UUID) -> list[uuid.UUID]:
         stmt = select(UserTag.tag_id).where(
-            UserTag.user_id == user_id
+            UserTag.user_id == user_id,
+            UserTag.is_declared.is_(True),
         )
 
         return list(self.db.scalars(stmt))
@@ -90,21 +87,24 @@ class UserRepository(UserRepositoryPort):
     ) -> list[uuid.UUID]:
         wanted = set(tag_ids)
 
-        current = set(self.get_tag_ids(user.id))
+        # Edit declared interests while preserving stored affinity data.
+        current = {
+            row.tag_id: row
+            for row in self.db.scalars(select(UserTag).where(UserTag.user_id == user.id))
+        }
+        for tag_id, row in current.items():
+            declared = tag_id in wanted
+            if row.is_declared != declared:
+                row.is_declared = declared
+                row.updated_at = utcnow()
 
-        for tag_id in current - wanted:
-            self.db.execute(
-                delete(UserTag).where(
-                    UserTag.user_id == user.id,
-                    UserTag.tag_id == tag_id,
-                )
-            )
-
-        for tag_id in wanted - current:
+        for tag_id in wanted - current.keys():
             self.db.add(
                 UserTag(
                     user_id=user.id,
                     tag_id=tag_id,
+                    is_declared=True,
+                    score=0.0,  # Neutral initial value; no affinity calculation here.
                 )
             )
 
