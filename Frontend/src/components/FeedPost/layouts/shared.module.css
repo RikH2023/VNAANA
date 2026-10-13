@@ -1,0 +1,72 @@
+/* Styles reused by several post layouts. Layout-specific styles live in <Layout>.module.css. */
+
+.header {
+  display: flex;
+  flex-wrap: wrap; /* on narrow screens the topic pill drops below the byline */
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding: 14px 10px 12px 18px;
+}
+
+.header > :first-child {
+  flex: 1 1 220px;
+}
+
+.headerEnd {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  margin-left: auto;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Headline + description block */
+.body {
+  padding: 14px 18px 4px;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.summary {
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+/* Short phone screens: keep the description to 3 lines so the whole post fits on one screen */
+@media (max-width: 819.98px) and (max-height: 760px) {
+  .summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 10px 12px;
+}
+
+.footerSpread {
+  composes: footer;
+  justify-content: space-between;
+  padding-left: 18px;
+}

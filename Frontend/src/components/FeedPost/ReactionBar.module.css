@@ -1,0 +1,167 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.column {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* ---------- Reaction buttons ---------- */
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  color: var(--muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.action:hover {
+  color: var(--ink);
+}
+
+.action[aria-pressed='true'] {
+  color: var(--accent);
+}
+
+.icon {
+  border-radius: 50%;
+}
+
+.icon:hover {
+  background: var(--surface-2);
+}
+
+.labelled {
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.labelled:hover {
+  border-color: var(--ink);
+}
+
+.labelled[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--foryou-bg);
+  color: var(--foryou-ink);
+}
+
+/* Round white buttons that float over an image (Poster layout) */
+.floating {
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-float);
+}
+
+.floating:hover {
+  color: var(--ink);
+  transform: scale(1.06);
+}
+
+/* ---------- Ask Nova ---------- */
+
+.ask {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: filter 0.15s ease;
+}
+
+.ask:hover {
+  filter: brightness(1.1);
+}
+
+.ask_pill {
+  padding: 0 18px 0 15px;
+}
+
+.ask_short {
+  padding: 0 16px 0 13px;
+}
+
+.ask_round {
+  border-radius: 50%;
+  box-shadow: var(--shadow-float);
+}
+
+/* ---------- Ask Nova input ---------- */
+
+.askForm {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 4px 4px 4px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+
+.askForm:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.askFormIcon {
+  flex: none;
+  color: var(--accent);
+}
+
+.askInput {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  font-size: 15px;
+}
+
+.askInput::placeholder {
+  color: var(--muted);
+}
+
+.askInput:focus-visible {
+  outline: none;
+}
+
+.send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+}

@@ -1,0 +1,126 @@
+.poster {
+  --strip-h: 64px;
+  background: var(--ink);
+}
+
+.carousel {
+  --parts-h: 640px;
+}
+
+/* ---------- Part 1: image with a solid dark text panel ---------- */
+
+.cover {
+  position: relative;
+  height: 100%;
+}
+
+.panel {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--strip-h);
+  padding: 16px 20px 6px;
+  background: var(--poster-panel);
+  color: #fff;
+}
+
+.headline {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.summary {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--on-dark-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- Overlays ---------- */
+
+.top {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  inset-inline: 14px;
+  display: grid;
+  gap: 10px;
+  pointer-events: none;
+}
+
+/* Dark backing keeps the progress bar visible on images and light panels alike */
+.progress {
+  padding: 6px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--poster-panel);
+}
+
+.rail {
+  position: absolute;
+  z-index: 2;
+  top: 84px;
+  right: 14px;
+}
+
+.strip {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--strip-h);
+  display: flex;
+  align-items: center;
+  padding-inline: 12px;
+  background: var(--poster-panel);
+  --focus: #fff;
+}
+
+.strip > div {
+  flex: 1;
+  align-items: center;
+}
+
+/* Both arrows are white here, because the strip itself is dark */
+.strip button {
+  border: 0;
+  background: #fff;
+  color: var(--ink);
+}
+
+.hint {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+@container feed (max-width: 520px) {
+  .headline {
+    font-size: 21px;
+  }
+}
+
+/* Phones: the poster fills the screen instead of a fixed 640px */
+@media (max-width: 819.98px) {
+  .poster.poster {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    min-height: 0;
+  }
+
+  .carousel {
+    --parts-min: 480px;
+  }
+}

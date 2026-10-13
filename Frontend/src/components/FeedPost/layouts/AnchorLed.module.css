@@ -1,0 +1,60 @@
+.strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.stripLabel {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+}
+
+.carousel {
+  --parts-h: 320px;
+}
+
+/* Taller on phones, so the Why / Read more text has room */
+@container feed (max-width: 520px) {
+  .carousel {
+    --parts-h: 440px;
+    --parts-min: 150px;
+  }
+}
+
+.pills {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 14px;
+  pointer-events: none;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px 0;
+}
+
+.body {
+  padding: 12px 18px 4px;
+}
+
+.reactions {
+  padding: 4px 12px 0 6px;
+}
+
+.ask {
+  padding: 4px 18px 18px;
+}

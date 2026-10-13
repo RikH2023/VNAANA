@@ -1,0 +1,18 @@
+.carousel {
+  --parts-h: 410px;
+}
+
+/* Taller on phones, so the Why / Read more text has room */
+@container feed (max-width: 520px) {
+  .carousel {
+    --parts-h: 460px;
+  }
+}
+
+.reactions {
+  padding: 4px 18px 0 6px;
+}
+
+.body {
+  padding: 4px 18px 4px;
+}

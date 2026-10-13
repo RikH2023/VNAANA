@@ -1,0 +1,32 @@
+.text {
+  padding: 0 18px 14px;
+}
+
+.headline {
+  margin-top: 12px;
+  font-size: 24px;
+}
+
+.carousel {
+  --parts-h: 240px;
+  margin-inline: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+@container feed (max-width: 520px) {
+  .carousel {
+    --parts-h: 420px;
+    margin-inline: 12px;
+  }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.bar {
+  flex: 1;
+}

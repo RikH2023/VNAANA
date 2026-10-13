@@ -1,0 +1,58 @@
+.wrap {
+  container: parts / inline-size;
+  position: relative;
+  height: var(--parts-h, 520px);
+  overflow: hidden;
+}
+
+/* Phones: start at the layout's height, but shrink when the screen is short */
+@media (max-width: 819.98px) {
+  .wrap.wrap {
+    flex: 0 1 var(--parts-h, 520px);
+    height: auto;
+    min-height: var(--parts-min, 200px);
+  }
+}
+
+/*
+ * Text parts read these variables for their padding, so they never
+ * sit underneath the arrows or other overlays.
+ */
+.viewport {
+  --part-pad-x: 20px;
+  --part-pad-bottom: 20px;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.viewport:focus-visible {
+  outline-offset: -3px;
+}
+
+.wrap[data-arrows='overlay'] .viewport {
+  --part-pad-x: 64px;
+}
+
+@container parts (max-width: 520px) {
+  .wrap[data-arrows='overlay'] .viewport {
+    --part-pad-x: 18px;
+    --part-pad-bottom: 66px;
+    /* Part 3: the chat input moves right of the "previous" arrow instead */
+    --readmore-pad-bottom: 10px;
+    --composer-inset: 54px;
+  }
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  min-width: 0;
+}
