@@ -31,6 +31,8 @@ class Article:
     canonical_url: str
     title: str
     description: str | None
+    content: str | None
+    is_scraped: bool
     author: str | None
     language: str | None
     published_at: datetime | None
