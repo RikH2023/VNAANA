@@ -33,6 +33,14 @@ class ArticleRepository(ABC):
         ...
 
     @abstractmethod
+    def list_unscraped(
+        self,
+        *,
+        limit: int = 100,
+    ) -> list[Article]:
+        ...
+
+    @abstractmethod
     def add(
         self,
         **fields: Any,
