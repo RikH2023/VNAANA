@@ -1,15 +1,17 @@
 import uuid
-from typing import Any
+from typing import Any, List
 
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from Backend.Dal.models import Article as ArticleModel
-from Backend.Logic.domain.article import (Article, ArticleProvider)
+from Backend.Logic.domain.article import Article, ArticleProvider
 from Backend.Logic.ports.article_repository import (
     ArticleRepository as ArticleRepositoryPort,
 )
+
+ArticleList = List[Article]
 
 
 class ArticleRepository(ArticleRepositoryPort):
@@ -72,7 +74,7 @@ class ArticleRepository(ArticleRepositoryPort):
         language: str | None = None,
         limit: int = 20,
         offset: int = 0,
-    ) -> list[Article]:
+    ) -> List[Article]:
         stmt = select(ArticleModel)
 
         if provider_id is not None:
@@ -158,6 +160,26 @@ class ArticleRepository(ArticleRepositoryPort):
         article = self._to_domain(article_model)
 
         return article, article_model.id == candidate_id
+
+    def list_unscraped(
+        self,
+        *,
+        limit: int = 100,
+    ) -> ArticleList:
+        """Return articles that have not yet been scraped."""
+        stmt = (
+            select(ArticleModel)
+            .where(ArticleModel.is_scraped.is_(False))
+            .order_by(ArticleModel.first_seen_at.asc())
+            .limit(limit)
+        )
+
+        article_models = self.db.scalars(stmt)
+
+        return [
+            self._to_domain(article_model)
+            for article_model in article_models
+        ]
 
     def update(
         self,

@@ -1,8 +1,10 @@
 import uuid
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, List
 
 from Backend.Logic.domain.article import Article
+
+ArticleList = List[Article]
 
 
 class ArticleRepository(ABC):
@@ -37,7 +39,7 @@ class ArticleRepository(ABC):
         self,
         *,
         limit: int = 100,
-    ) -> list[Article]:
+    ) -> ArticleList:
         ...
 
     @abstractmethod
