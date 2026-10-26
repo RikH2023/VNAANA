@@ -12,6 +12,8 @@ from Backend.Logic.ports.engagement_event_repository import (
 from Backend.Logic.ports.story_repository import StoryRepository
 from Backend.Logic.ports.tag_repository import TagRepository
 from Backend.Logic.ports.user_repository import UserRepository
+from Backend.Logic.ports.algorithm_repository import AlgorithmRepository
+
 
 
 class UserService:
@@ -22,12 +24,14 @@ class UserService:
         events: EngagementEventRepository,
         stories: StoryRepository,
         articles: ArticleRepository,
+        algorithm: AlgorithmRepository,
     ):
         self.users = users
         self.tags = tags
         self.events = events
         self.stories = stories
         self.articles = articles
+        self.algorithm = AlgorithmRepository
 
     # ------------------------------------------------------------------
     # Users
@@ -66,9 +70,9 @@ class UserService:
         )
 
     def set_consent(
-        self,
-        user_id: uuid.UUID,
-        consent: bool,
+            self,
+            user_id: uuid.UUID,
+            consent: bool,
     ) -> User:
         user = self.get_user(user_id)
 
@@ -78,6 +82,10 @@ class UserService:
                 analytics_consent=consent,
                 consent_updated_at=datetime.now(timezone.utc),
             )
+
+            if not consent:
+                # data to remove (design doc D3).
+                self.algorithm.delete_algorithm_data(user_id)
 
         return user
 
