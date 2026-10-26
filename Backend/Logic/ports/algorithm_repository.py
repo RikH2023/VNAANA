@@ -11,10 +11,10 @@ from datetime import datetime
 from typing import Protocol
 
 from Backend.Logic.Algorithm.shared_types import StoryTags, TagScores
+from Backend.Logic.domain.declared_tag import DeclaredTag
 from Backend.Logic.domain.engagement_event import EngagementEvent
-from Backend.Logic.domain.onboarding_tag import OnboardingTag
 from Backend.Logic.domain.story import Story
-from Backend.Logic.domain.story_reaction import StoryReaction
+from Backend.Logic.domain.story_reaction import Reaction, StoryReaction
 
 
 class AlgorithmRepository(Protocol):
@@ -33,8 +33,8 @@ class AlgorithmRepository(Protocol):
         """The user's current likes/dislikes with updated_at >= since."""
         ...
 
-    def list_onboarding_tags(self, user_id: uuid.UUID) -> list[OnboardingTag]:
-        """Tags the user picked during onboarding (flagged user_tags rows)."""
+    def list_declared_tags(self, user_id: uuid.UUID) -> list[DeclaredTag]:
+        """The user's declared tags (user_tags.is_declared), with when they were declared."""
         ...
 
     # ---- hourly job: saving the result -----------------------------------------
@@ -45,6 +45,18 @@ class AlgorithmRepository(Protocol):
 
     def delete_tag_scores_without_consent(self) -> None:
         """Remove stored scores of every user who no longer has consent."""
+        ...
+
+    # ---- reactions (design doc D2) -------------------------------------------------
+
+    def set_reaction(
+        self, user_id: uuid.UUID, story_id: uuid.UUID, reaction: Reaction, at: datetime
+    ) -> StoryReaction:
+        """Store the user's like/dislike on a story, replacing any earlier one."""
+        ...
+
+    def delete_reaction(self, user_id: uuid.UUID, story_id: uuid.UUID) -> None:
+        """Unlike/undislike. Doing nothing when there is no reaction is fine."""
         ...
 
     # ---- consent withdrawn (design doc D3) ---------------------------------------

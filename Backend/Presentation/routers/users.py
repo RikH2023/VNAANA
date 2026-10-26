@@ -14,6 +14,8 @@ from Backend.Presentation.schemas.users import (
     ConsentUpdate,
     EngagementEventCreate,
     EngagementEventRead,
+    ReactionUpdate,
+    StoryReactionRead,
     UserCreate,
     UserRead,
     UserTagsUpdate,
@@ -136,4 +138,36 @@ def list_events(
         user_id,
         limit,
         offset,
+    )
+
+
+@router.put(
+    "/{user_id}/reactions/{story_id}",
+    response_model=StoryReactionRead,
+)
+def set_reaction(
+    user_id: uuid.UUID,
+    story_id: uuid.UUID,
+    body: ReactionUpdate,
+    service: UserServiceDep,
+):
+    return service.set_reaction(
+        user_id,
+        story_id,
+        body.reaction,
+    )
+
+
+@router.delete(
+    "/{user_id}/reactions/{story_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def remove_reaction(
+    user_id: uuid.UUID,
+    story_id: uuid.UUID,
+    service: UserServiceDep,
+):
+    service.remove_reaction(
+        user_id,
+        story_id,
     )

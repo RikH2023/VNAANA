@@ -13,6 +13,9 @@ from sqlalchemy.orm import Session
 
 from Backend.database import get_db
 
+from Backend.Dal.repositories.algorithm_repository import (
+    AlgorithmRepository as DalAlgorithmRepository,
+)
 from Backend.Dal.repositories.article_repository import (
     ArticleRepository as DalArticleRepository,
 )
@@ -32,6 +35,7 @@ from Backend.Dal.repositories.user_repository import (
     UserRepository as DalUserRepository,
 )
 
+from Backend.Logic.algorithm_service import AlgorithmService
 from Backend.Logic.article_service import ArticleService
 from Backend.Logic.story_service import StoryService
 from Backend.Logic.user_service import UserService
@@ -99,10 +103,30 @@ def get_user_service(
         events=DalEngagementEventRepository(db),
         stories=DalStoryRepository(db),
         articles=DalArticleRepository(db),
+        algorithm=DalAlgorithmRepository(db),
     )
 
 
 UserServiceDep = Annotated[
     UserService,
     Depends(get_user_service),
+]
+
+
+# ---------------------------------------------------------------------------
+# Algorithm ("For you")
+# ---------------------------------------------------------------------------
+
+def get_algorithm_service(
+    db: DbSession,
+) -> AlgorithmService:
+    return AlgorithmService(
+        algorithm=DalAlgorithmRepository(db),
+        users=DalUserRepository(db),
+    )
+
+
+AlgorithmServiceDep = Annotated[
+    AlgorithmService,
+    Depends(get_algorithm_service),
 ]

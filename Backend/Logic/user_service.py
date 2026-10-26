@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from Backend.Logic.domain.engagement_event import EngagementEvent
+from Backend.Logic.domain.story_reaction import Reaction, StoryReaction
 from Backend.Logic.domain.user import User
 from Backend.Logic.exceptions import ConsentRequiredError, NotFoundError
 from Backend.Logic.ports.article_repository import ArticleRepository
@@ -31,7 +32,7 @@ class UserService:
         self.events = events
         self.stories = stories
         self.articles = articles
-        self.algorithm = AlgorithmRepository
+        self.algorithm = algorithm
 
     # ------------------------------------------------------------------
     # Users
@@ -84,6 +85,8 @@ class UserService:
             )
 
             if not consent:
+                # Consent went from on to off. Reactions and tag scores only
+                # exist while consent is on, so this is exactly when there is
                 # data to remove (design doc D3).
                 self.algorithm.delete_algorithm_data(user_id)
 
@@ -193,4 +196,48 @@ class UserService:
             user_id,
             limit=limit,
             offset=offset,
+        )
+
+    # ------------------------------------------------------------------
+    # Reactions (design doc D2)
+    # ------------------------------------------------------------------
+
+    def set_reaction(
+        self,
+        user_id: uuid.UUID,
+        story_id: uuid.UUID,
+        reaction: Reaction,
+    ) -> StoryReaction:
+        user = self.get_user(user_id)
+
+        # Same rule as events: no consent, nothing is stored (design doc D3).
+        if not user.analytics_consent:
+            raise ConsentRequiredError(
+                "User has not given analytics consent"
+            )
+
+        if self.stories.get(story_id) is None:
+            raise NotFoundError(
+                "Story",
+                story_id,
+            )
+
+        return self.algorithm.set_reaction(
+            user_id,
+            story_id,
+            reaction,
+            datetime.now(timezone.utc),
+        )
+
+    def remove_reaction(
+        self,
+        user_id: uuid.UUID,
+        story_id: uuid.UUID,
+    ) -> None:
+        # No consent check: removing data is always allowed.
+        self.get_user(user_id)
+
+        self.algorithm.delete_reaction(
+            user_id,
+            story_id,
         )

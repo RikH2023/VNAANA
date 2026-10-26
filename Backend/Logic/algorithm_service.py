@@ -48,13 +48,13 @@ class AlgorithmService:
         for user_id in user_ids:
             events = self.algorithm.list_events_since(user_id, since)
             reactions = self.algorithm.list_reactions_since(user_id, since)
-            onboarding_tags = self.algorithm.list_onboarding_tags(user_id)
+            declared_tags = self.algorithm.list_declared_tags(user_id)
 
             story_ids = {event.story_id for event in events if event.story_id is not None}
             story_ids |= {reaction.story_id for reaction in reactions}
             story_tags = self.algorithm.get_story_tags(list(story_ids))
 
-            scores = score_user(events, reactions, onboarding_tags, story_tags, now)
+            scores = score_user(events, reactions, declared_tags, story_tags, now)
             self.algorithm.replace_tag_scores(user_id, scores, now)
 
         return len(user_ids)
