@@ -33,6 +33,8 @@ class ArticleRepository(ArticleRepositoryPort):
             canonical_url=article_model.canonical_url,
             title=article_model.title,
             description=article_model.description,
+            content=article_model.content,
+            is_scraped=article_model.is_scraped,
             author=article_model.author,
             language=article_model.language,
             published_at=article_model.published_at,
