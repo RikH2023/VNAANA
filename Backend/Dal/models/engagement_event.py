@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -11,6 +11,11 @@ from Backend.Dal.models.base import Base
 
 class EngagementEvent(Base):
     __tablename__ = "engagement_events"
+    __table_args__ = (
+        Index("ix_engagement_events_user_occurred", "user_id", "occurred_at"),
+        Index("ix_engagement_events_story_occurred", "story_id", "occurred_at"),
+        Index("ix_engagement_events_session_occurred", "session_id", "occurred_at"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     # Nullable in the diagram, so anonymous (not logged in) events are possible.
@@ -24,7 +29,12 @@ class EngagementEvent(Base):
     article_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("articles.id", ondelete="SET NULL")
     )
-    event_type: Mapped[str] = mapped_column(String, nullable=False)
+    event_type: Mapped[str] = mapped_column(
+        String,
+        ForeignKey("event_weights.event_type", name="fk_engagement_events_event_type"),
+        nullable=False,
+    )
+    ingested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     occurred_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
