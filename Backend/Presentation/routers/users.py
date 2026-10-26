@@ -16,7 +16,6 @@ from Backend.Presentation.schemas.users import (
     EngagementEventRead,
     UserCreate,
     UserRead,
-    UserTagRead,
     UserTagsUpdate,
     UserUpdate,
 )
@@ -83,7 +82,7 @@ def set_consent(
 
 @router.get(
     "/{user_id}/tags",
-    response_model=list[UserTagRead],
+    response_model=list[uuid.UUID],
 )
 def get_user_tags(
     user_id: uuid.UUID,
@@ -94,7 +93,7 @@ def get_user_tags(
 
 @router.put(
     "/{user_id}/tags",
-    response_model=list[UserTagRead],
+    response_model=list[uuid.UUID],
 )
 def set_user_tags(
     user_id: uuid.UUID,

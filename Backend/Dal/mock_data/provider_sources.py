@@ -1,3 +1,4 @@
+
 from uuid import UUID, uuid5, NAMESPACE_URL
 
 from Backend.Logic.domain.provider_source import ProviderSource
@@ -8,7 +9,10 @@ def _provider_id(domain: str) -> UUID:
 
 
 def _source_id(provider_domain: str, source_url: str) -> UUID:
-    return uuid5(NAMESPACE_URL, f"source:{provider_domain}:{source_url}")
+    return uuid5(
+        NAMESPACE_URL,
+        f"source:{provider_domain}:{source_url}",
+    )
 
 
 def _source(
@@ -20,15 +24,14 @@ def _source(
     poll_interval_minutes: int,
     is_active: bool = True,
     configuration: dict | None = None,
+    source_label: str | None = None,
 ) -> ProviderSource:
-    provider_id = _provider_id(domain)
-
     return ProviderSource(
         id=_source_id(domain, url),
-        provider_id=provider_id,
+        provider_id=_provider_id(domain),
         provider_name=name,
         provider_domain=domain,
-        name=f"{name} RSS",
+        name=source_label or f"{name} RSS",
         source_type=source_type,
         url=url,
         poll_interval_minutes=poll_interval_minutes,
@@ -37,15 +40,112 @@ def _source(
     )
 
 
+def _rss(
+    name: str,
+    domain: str,
+    url: str,
+    category: str,
+    interval: int = 30,
+) -> ProviderSource:
+    return _source(
+        name=name,
+        domain=domain,
+        source_type="rss",
+        url=url,
+        poll_interval_minutes=interval,
+        source_label=f"{name} {category} RSS",
+        configuration={"category": category},
+    )
+
+
 MOCK_PROVIDER_SOURCES: list[ProviderSource] = [
-    # National
+    # ---------------------------------------------------------
+    # NOS: general and category feeds
+    # Official directory: https://nos.nl/feeds
+    # ---------------------------------------------------------
     _source(
         name="NOS",
         domain="nos.nl",
         source_type="rss",
         url="https://feeds.nos.nl/nosnieuwsalgemeen",
         poll_interval_minutes=15,
+        source_label="NOS Algemeen RSS",
+        configuration={"category": "general"},
     ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwsbinnenland",
+        "Binnenland", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwsbuitenland",
+        "Buitenland", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwspolitiek",
+        "Politiek", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwseconomie",
+        "Economie", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwstech",
+        "Tech", 20,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwscultuurenmedia",
+        "Cultuur en media", 30,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwsopmerkelijk",
+        "Opmerkelijk", 30,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosnieuwskoningshuis",
+        "Koningshuis", 30,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nossportalgemeen",
+        "Sport", 10,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosvoetbal",
+        "Voetbal", 10,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/noswielrennen",
+        "Wielrennen", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosschaatsen",
+        "Schaatsen", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nostennis",
+        "Tennis", 15,
+    ),
+    _rss(
+        "NOS", "nos.nl",
+        "https://feeds.nos.nl/nosformule1",
+        "Formule 1", 15,
+    ),
+
+    # ---------------------------------------------------------
+    # NU.nl
+    # ---------------------------------------------------------
     _source(
         name="NU.nl",
         domain="nu.nl",
@@ -53,6 +153,11 @@ MOCK_PROVIDER_SOURCES: list[ProviderSource] = [
         url="https://www.nu.nl/rss",
         poll_interval_minutes=10,
     ),
+
+    # ---------------------------------------------------------
+    # RTL Nieuws
+    # Feed URL not mapped: leave inactive until verified.
+    # ---------------------------------------------------------
     _source(
         name="RTL Nieuws",
         domain="rtl.nl",
@@ -67,13 +172,22 @@ MOCK_PROVIDER_SOURCES: list[ProviderSource] = [
         },
     ),
 
+    # ---------------------------------------------------------
     # DPG Media
+    # ---------------------------------------------------------
     _source(
         name="AD",
         domain="ad.nl",
         source_type="rss",
         url="https://www.ad.nl/home/rss.xml",
         poll_interval_minutes=45,
+        source_label="AD Algemeen RSS",
+        configuration={"category": "general"},
+    ),
+    _rss(
+        "AD", "ad.nl",
+        "https://www.ad.nl/sport/rss.xml",
+        "Sport", 20,
     ),
     _source(
         name="De Volkskrant",
@@ -139,7 +253,9 @@ MOCK_PROVIDER_SOURCES: list[ProviderSource] = [
         poll_interval_minutes=20,
     ),
 
+    # ---------------------------------------------------------
     # Mediahuis / financial
+    # ---------------------------------------------------------
     _source(
         name="NRC",
         domain="nrc.nl",
@@ -188,7 +304,9 @@ MOCK_PROVIDER_SOURCES: list[ProviderSource] = [
         poll_interval_minutes=20,
     ),
 
+    # ---------------------------------------------------------
     # Technology / digital
+    # ---------------------------------------------------------
     _source(
         name="Tweakers",
         domain="tweakers.net",
@@ -218,18 +336,24 @@ MOCK_PROVIDER_SOURCES: list[ProviderSource] = [
         poll_interval_minutes=30,
     ),
 
+    # ---------------------------------------------------------
     # Government
+    # ---------------------------------------------------------
     _source(
         name="Rijksoverheid",
         domain="rijksoverheid.nl",
         source_type="rss",
         url=(
             "https://www.rijksoverheid.nl/api/rss?"
-            "query=%7B%22filters%22%3A%5B%7B%22field%22%3A%22content_type%22%2C"
-            "%22values%22%3A%5B%22pro%3AdownloadDocument%22%2C"
-            "%22pro%3AvideoDocument%22%2C%22pro%3AaudioFragmentDocument%22%2C"
-            "%22pro%3AfaqDocument%22%5D%2C%22type%22%3A%22any%22%7D%5D%2C"
-            "%22resultSearchTerm%22%3A%22%22%2C%22pageTitle%22%3A%22Documenten%22%7D"
+            "query=%7B%22filters%22%3A%5B%7B%22field%22%3A"
+            "%22content_type%22%2C%22values%22%3A%5B"
+            "%22pro%3AdownloadDocument%22%2C"
+            "%22pro%3AvideoDocument%22%2C"
+            "%22pro%3AaudioFragmentDocument%22%2C"
+            "%22pro%3AfaqDocument%22%5D%2C"
+            "%22type%22%3A%22any%22%7D%5D%2C"
+            "%22resultSearchTerm%22%3A%22%22%2C"
+            "%22pageTitle%22%3A%22Documenten%22%7D"
         ),
         poll_interval_minutes=20,
     ),

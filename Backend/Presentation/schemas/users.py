@@ -8,6 +8,8 @@ from Backend.Presentation.schemas.common import ORMModel, TagRead
 
 
 class UserCreate(BaseModel):
+    auth_provider: str = Field(min_length=1)
+    auth_subject: str = Field(min_length=1)
     age_band: str | None = Field(default=None, examples=["18-24"])
     language: str | None = Field(default=None, max_length=5, examples=["nl"])
     region: str | None = Field(default=None, examples=["Noord-Brabant"])
@@ -36,6 +38,7 @@ class UserRead(ORMModel):
     preferences: dict[str, Any] | None
     analytics_consent: bool
     consent_updated_at: datetime | None
+    affinity_updated_at: datetime | None
 
 
 class UserTagsUpdate(BaseModel):
@@ -45,6 +48,9 @@ class UserTagsUpdate(BaseModel):
 class UserTagRead(ORMModel):
     tag: TagRead
     updated_at: datetime
+    is_declared: bool
+    score: float
+    computed_at: datetime | None
 
 
 class EngagementEventCreate(BaseModel):
@@ -65,6 +71,7 @@ class EngagementEventRead(ORMModel):
     article_id: uuid.UUID | None
     event_type: str
     occurred_at: datetime
+    ingested_at: datetime
     active_duration_ms: int | None
     # The ORM attribute is event_metadata (see the model), the API field is metadata.
     metadata: dict[str, Any] | None = Field(
