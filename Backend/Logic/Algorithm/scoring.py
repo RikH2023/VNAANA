@@ -17,11 +17,13 @@ from datetime import datetime
 
 from Backend.Logic.Algorithm.decay import decay
 from Backend.Logic.Algorithm.shared_types import StoryTags, TagScores
+from Backend.Logic.domain.declared_tag import DeclaredTag
 from Backend.Logic.domain.engagement_event import EngagementEvent
-from Backend.Logic.domain.onboarding_tag import OnboardingTag
 from Backend.Logic.domain.story_reaction import Reaction, StoryReaction
 
 # ---- weights (design doc D1, D8) ---------------------------------------------
+# Source of truth for weights. The event_weights table only lists which
+# event types are allowed; its weight column is not read by the algorithm.
 
 EVENT_WEIGHTS: dict[str, float] = {
     "share": 5,
@@ -33,7 +35,7 @@ REACTION_WEIGHTS: dict[Reaction, float] = {
     Reaction.dislike: -5,
 }
 
-ONBOARDING_BONUS: float = 5
+DECLARED_TAG_BONUS: float = 5
 
 
 @dataclass(frozen=True)
@@ -79,10 +81,10 @@ def signals_from_reactions(reactions: list[StoryReaction], story_tags: StoryTags
     return signals
 
 
-def signals_from_onboarding(onboarding_tags: list[OnboardingTag]) -> list[Signal]:
+def signals_from_declared_tags(declared_tags: list[DeclaredTag]) -> list[Signal]:
     return [
-        Signal((tag.tag_id,), ONBOARDING_BONUS, tag.picked_at)
-        for tag in onboarding_tags
+        Signal((tag.tag_id,), DECLARED_TAG_BONUS, tag.declared_at)
+        for tag in declared_tags
     ]
 
 
@@ -106,14 +108,14 @@ def tag_scores(signals: list[Signal], now: datetime) -> TagScores:
 def score_user(
     events: list[EngagementEvent],
     reactions: list[StoryReaction],
-    onboarding_tags: list[OnboardingTag],
+    declared_tags: list[DeclaredTag],
     story_tags: StoryTags,
     now: datetime,
 ) -> TagScores:
     signals = (
         signals_from_events(events, story_tags)
         + signals_from_reactions(reactions, story_tags)
-        + signals_from_onboarding(onboarding_tags)
+        + signals_from_declared_tags(declared_tags)
     )
 
     return tag_scores(signals, now)
