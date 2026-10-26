@@ -7,6 +7,9 @@ from Backend.Dal.repositories.provider_repository import ProviderRepository
 from Backend.Dal.repositories.mock_provider_source_repository import (
     MockProviderSourceRepository,
 )
+from Backend.Logic.article_normalization_service import (
+    ArticleNormalizationService,
+)
 from Backend.Logic.article_service import ArticleService
 from Backend.Logic.news_gathering_service import NewsGatheringService
 from Backend.Logic.provider_source_service import ProviderSourceService
@@ -14,19 +17,23 @@ from Backend.Logic.sources.rss_source import RSSSource
 
 
 async def main() -> None:
-    nos_source = next(
+    sources = [
         source
         for source in MOCK_PROVIDER_SOURCES
-        if source.provider_name == "NOS"
-    )
+        if source.is_active
+        and source.url
+        and source.source_type == "rss"
+    ]
 
-    print(f"Selected source: {nos_source.name}")
-    print(f"URL: {nos_source.url}")
-    print(f"Provider ID: {nos_source.provider_id}")
+    print(f"Found {len(sources)} active RSS sources to test.\n")
 
-    source_repository = MockProviderSourceRepository(
-        sources=[nos_source]
-    )
+    if not sources:
+        print("No active RSS sources found.")
+        return
+
+    successful = []
+    failed = []
+    skipped = []
 
     db = SessionLocal()
 
@@ -34,47 +41,94 @@ async def main() -> None:
         provider_repository = ProviderRepository(db)
         article_repository = ArticleRepository(db)
 
-        provider = provider_repository.get(nos_source.provider_id)
+        for source in sources:
+            print("=" * 80)
+            print(f"Source: {source.name}")
+            print(f"Provider: {source.provider_name}")
+            print(f"URL: {source.url}")
+            print(f"Provider ID: {source.provider_id}")
 
-        if provider is None:
-            raise RuntimeError(
-                "The NOS provider does not exist in the database. "
-                f"Expected provider_id: {nos_source.provider_id}"
-            )
+            try:
+                provider = provider_repository.get(source.provider_id)
 
-        print(
-            f"Found provider in database: "
-            f"{provider.name} ({provider.domain})"
-        )
+                if provider is None:
+                    message = (
+                        "Provider does not exist in the database: "
+                        f"{source.provider_id}"
+                    )
+                    print(f"SKIPPED: {message}")
+                    skipped.append((source.name, message))
+                    continue
 
-        provider_source_service = ProviderSourceService(
-            source_repository
-        )
+                print(
+                    f"Found provider: {provider.name} "
+                    f"({provider.domain})"
+                )
 
-        article_service = ArticleService()
+                # Isolate this source's database operations.
+                source_repository = MockProviderSourceRepository(
+                    sources=[source]
+                )
 
-        news_gathering_service = NewsGatheringService(
-            provider_source_service=provider_source_service,
-            article_service=article_service,
-            article_repository=article_repository,
-            provider_repository=provider_repository,
-            source_handlers={
-                "rss": RSSSource(),
-            },
-        )
+                provider_source_service = ProviderSourceService(
+                    source_repository
+                )
 
-        await news_gathering_service.gather()
+                
+                news_gathering_service = NewsGatheringService(
+                    provider_source_service=provider_source_service,
+                    article_service=ArticleService(
+                        articles=article_repository,
+                        providers=provider_repository,
+                    ),
+                    article_repository=article_repository,
+                    provider_repository=provider_repository,
+                    source_handlers={
+                        "rss": RSSSource(),
+                    },
+                    article_normalization_service=ArticleNormalizationService(),
+                )
 
-        db.commit()
 
-        print("Database transaction committed.")
+                await news_gathering_service.gather()
 
-    except Exception:
-        db.rollback()
-        raise
+                db.commit()
+
+                print("SUCCESS: Gathering completed and committed.")
+                successful.append(source.name)
+
+            except Exception as exc:
+                db.rollback()
+
+                message = f"{type(exc).__name__}: {exc}"
+                print(f"FAILED: {message}")
+                failed.append((source.name, message))
 
     finally:
         db.close()
+
+    print("\n" + "=" * 80)
+    print("RSS SOURCE TEST SUMMARY")
+    print("=" * 80)
+    print(f"Total selected: {len(sources)}")
+    print(f"Successful:     {len(successful)}")
+    print(f"Failed:         {len(failed)}")
+    print(f"Skipped:        {len(skipped)}")
+
+    if successful:
+        print("\nSuccessful sources:")
+        for name in successful:
+            print(f"  [OK] {name}")
+
+    if failed:
+        print("\nFailed sources:")
+        for name, error in failed:
+            print(f"  [FAIL] {name}: {error}")
+
+    if skipped:
+        print("\nSkipped sources:")
+        for name, reason in skipped:
+            print(f"  [SKIP] {name}: {reason}")
 
 
 if __name__ == "__main__":
