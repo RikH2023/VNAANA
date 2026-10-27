@@ -14,7 +14,7 @@ from sqlalchemy.schema import CreateTable
 from Backend.Dal.models import (
     Article, Base, EngagementEvent, Provider, Story,
     StoryArticle, StoryStatus, StoryTag, Tag, User, UserTag,
-    EventWeight,
+    EventWeight, StoryReaction,
 )
 from Backend.Dal.repositories import ArticleRepository, UserRepository, EngagementEventRepository
 from Backend.Logic.exceptions import NotFoundError
@@ -62,8 +62,8 @@ class SchemaTests(unittest.TestCase):
         self.assertEqual(Story.__table__.c.status.default.arg, StoryStatus.draft)
         self.assertEqual(Story.__table__.c.status.server_default.arg, "draft")
         self.assertEqual(Story.__table__.c.status.type.enums, ["draft", "published", "archived"])
-        self.assertEqual(len(Base.metadata.tables), 10)
-        self.assertEqual(sum(len(t.columns) for t in Base.metadata.tables.values()), 63)
+        self.assertEqual(len(Base.metadata.tables), 11)
+        self.assertEqual(sum(len(t.columns) for t in Base.metadata.tables.values()), 67)
         expected_server_defaults = {
             ("users", "analytics_consent"),
             ("providers", "created_at"),
@@ -76,6 +76,7 @@ class SchemaTests(unittest.TestCase):
             ("user_tags", "updated_at"),
             ("engagement_events", "occurred_at"),
             ("articles", "is_scraped"),
+            ("story_reactions", "updated_at"),
         }
         actual_server_defaults = {
             (table.name, column.name)
@@ -96,7 +97,8 @@ class SchemaTests(unittest.TestCase):
                 self.assertEqual(fk.ondelete, expected)
         for model, columns in [(StoryArticle, ["story_id", "article_id"]),
                                (StoryTag, ["story_id", "tag_id"]),
-                               (UserTag, ["user_id", "tag_id"])]:
+                               (UserTag, ["user_id", "tag_id"]),
+                               (StoryReaction, ["user_id", "story_id"]),]:
             self.assertEqual(list(model.__table__.primary_key.columns.keys()), columns)
 
 
@@ -235,7 +237,71 @@ class PersistenceTests(unittest.TestCase):
             with self.db.begin_nested():
                 self.db.add(EngagementEvent(session_id=uuid.uuid4(), event_type="view"))
                 self.db.flush()
+    def test_story_reaction_constraints_and_cascade(self):
+        user = User(
+            auth_provider="test",
+            auth_subject=str(uuid.uuid4()),
+        )
+        story = Story(title="Reaction test")
 
+        self.db.add_all([user, story])
+        self.db.flush()
+
+        user_id = user.id
+        story_id = story.id
+
+        self.db.add(
+            StoryReaction(
+                user_id=user_id,
+                story_id=story_id,
+                reaction="like",
+            )
+        )
+        self.db.flush()
+
+        saved = self.db.get(
+            StoryReaction,
+            (user_id, story_id),
+        )
+
+        self.assertEqual(saved.reaction, "like")
+        self.assertIsNotNone(saved.updated_at)
+
+        # Only one reaction per user/story pair.
+        with self.assertRaises(IntegrityError):
+            with self.db.begin_nested():
+                self.db.execute(
+                    StoryReaction.__table__.insert().values(
+                        user_id=user_id,
+                        story_id=story_id,
+                        reaction="dislike",
+                    )
+                )
+
+        # Reject values outside the allowed choices.
+        with self.assertRaises(IntegrityError):
+            with self.db.begin_nested():
+                self.db.execute(
+                    StoryReaction.__table__.update()
+                    .where(
+                        StoryReaction.user_id == user_id,
+                        StoryReaction.story_id == story_id,
+                    )
+                    .values(reaction="invalid")
+                )
+
+        # Deleting the story also deletes its reaction.
+        self.db.delete(story)
+        self.db.flush()
+
+        remaining = self.db.execute(
+            select(StoryReaction.__table__).where(
+                StoryReaction.user_id == user_id,
+                StoryReaction.story_id == story_id,
+            )
+        ).first()
+
+        self.assertIsNone(remaining)
 
 if __name__ == "__main__":
     unittest.main()
