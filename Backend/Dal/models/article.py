@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, String, Text, func, Boolean, false
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,6 +22,13 @@ class Article(Base):
     canonical_url: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     title: Mapped[str] = mapped_column(Text, nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
+    content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_scraped: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default=false(),
+    )
     author: Mapped[str | None] = mapped_column(String)
     language: Mapped[str | None] = mapped_column(String(5))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -1,8 +1,10 @@
 import uuid
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, List
 
 from Backend.Logic.domain.article import Article
+
+ArticleList = List[Article]
 
 
 class ArticleRepository(ABC):
@@ -30,6 +32,14 @@ class ArticleRepository(ABC):
         limit: int = 20,
         offset: int = 0,
     ) -> list[Article]:
+        ...
+
+    @abstractmethod
+    def list_unscraped(
+        self,
+        *,
+        limit: int = 100,
+    ) -> ArticleList:
         ...
 
     @abstractmethod
