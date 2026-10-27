@@ -1,14 +1,10 @@
-name: Python CI
+name: CI
 
 on:
     push:
-        branches:
-            - dev
-            - main
+        branches: [dev, main]
     pull_request:
-        branches:
-            - dev
-            - main
+        branches: [dev, main]
 
 permissions:
     contents: read
@@ -18,8 +14,8 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    build-and-test:
-        name: Build and test
+    test:
+        name: Unit Tests
         runs-on: ubuntu-latest
 
         steps:
@@ -30,15 +26,16 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: '3.12.2'
-
-            - name: Set up pip
-              run: python -m pip install --upgrade pip==24.0
+                  cache: pip
+                  cache-dependency-path: requirements.txt
 
             - name: Install dependencies
-              run: python -m pip install -r requirements.txt
+              run: |
+                  python -m pip install --upgrade pip
+                  python -m pip install -r requirements.txt
 
-            - name: Check Python syntax
-              run: python -m compileall -q .
+            - name: Compile Python files
+              run: python -m compileall -q Backend
 
-            - name: Run automated tests
-              run: python -m pytest -v
+            - name: Run unit tests
+              run: python -m pytest -c Backend/pytest.ini Backend/tests/unit -v

@@ -3,7 +3,7 @@
 import pytest
 
 from Backend.Logic.Algorithm.decay import decay
-from Backend.tests.algorithm.builders import NOW, days_ago
+from Backend.tests.unit.algorithm.builders import NOW, days_ago
 
 
 @pytest.mark.parametrize(

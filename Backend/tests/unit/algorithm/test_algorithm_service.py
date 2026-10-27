@@ -10,7 +10,7 @@ from Backend.Logic.domain.feed import FeedStatus
 from Backend.Logic.domain.story import StoryStatus
 from Backend.Logic.domain.story_reaction import Reaction
 from Backend.Logic.exceptions import NotFoundError
-from Backend.tests.algorithm.builders import (
+from Backend.tests.unit.algorithm.builders import (
     NOW,
     declared,
     make_event,
