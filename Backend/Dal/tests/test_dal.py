@@ -63,7 +63,7 @@ class SchemaTests(unittest.TestCase):
         self.assertEqual(Story.__table__.c.status.server_default.arg, "draft")
         self.assertEqual(Story.__table__.c.status.type.enums, ["draft", "published", "archived"])
         self.assertEqual(len(Base.metadata.tables), 10)
-        self.assertEqual(sum(len(t.columns) for t in Base.metadata.tables.values()), 61)
+        self.assertEqual(sum(len(t.columns) for t in Base.metadata.tables.values()), 63)
         expected_server_defaults = {
             ("users", "analytics_consent"),
             ("providers", "created_at"),
@@ -75,6 +75,7 @@ class SchemaTests(unittest.TestCase):
             ("story_articles", "added_at"),
             ("user_tags", "updated_at"),
             ("engagement_events", "occurred_at"),
+            ("articles", "is_scraped"),
         }
         actual_server_defaults = {
             (table.name, column.name)

@@ -5,7 +5,7 @@ import pytest
 
 from Backend.Logic.domain.story_reaction import Reaction
 from Backend.Logic.exceptions import ConsentRequiredError, NotFoundError
-from Backend.tests.algorithm.builders import make_story, make_user, new_id
+from Backend.tests.unit.algorithm.builders import make_story, make_user, new_id
 
 
 def add_user(repo, users, *, consent=True):
