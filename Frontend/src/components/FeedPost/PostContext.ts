@@ -5,9 +5,9 @@ import type { Story } from '../../types'
 import type { PostActions } from './usePostActions'
 
 /*
- * Everything a post layout needs: the story, the shared carousel state,
+ * Everything the pieces of a post need: the story, the shared carousel state,
  * the reaction handlers and the Ask Nova conversation. FeedPost provides it;
- * layouts and their pieces read it with usePost().
+ * the pieces read it with usePost().
  */
 export type PostContextValue = {
   story: Story

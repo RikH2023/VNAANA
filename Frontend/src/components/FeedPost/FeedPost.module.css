@@ -7,13 +7,27 @@
   box-shadow: var(--shadow-card);
 }
 
-/* Flipbook draws its own card (the book), so its arrows can sit below it */
-.post[data-layout='flipbook'] {
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
+/* Arrows use the default: vertically centred on the carousel */
+.carousel {
+  --parts-h: 540px;
+}
+
+@container feed (max-width: 520px) {
+  .carousel {
+    --parts-h: 640px;
+  }
+}
+
+/* Centred progress dots, then heart / share / Ask Nova */
+.dotsRow {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.actionsFooter {
+  padding: 2px 10px 8px 12px;
 }
 
 /*

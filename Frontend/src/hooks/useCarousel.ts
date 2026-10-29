@@ -5,8 +5,7 @@ const SWIPE_MIN_PX = 40
 
 /*
  * State for the 3-part story carousel.
- * One instance lives in FeedPost, so every post layout shares the same
- * current part — switching layouts keeps your place.
+ * One instance lives in FeedPost, so every piece of the post shares the same current part.
  */
 export function useCarousel(count: number) {
   const [index, setIndex] = useState(0)

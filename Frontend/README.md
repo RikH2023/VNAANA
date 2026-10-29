@@ -45,7 +45,6 @@ src/
     useNovaChat.ts         The Ask Nova conversation of one post
   components/
     Navigation/            Sidebar, MobileTopBar, MobileTabBar, Logo, SearchField
-    LayoutSwitcher/        "Post layout" segmented control
     BriefingCard/          Nova's greeting + progress bar (dismissible)
     NovaAvatar/            Nova's face
     FeedPost/              One story – see below
@@ -58,25 +57,23 @@ App
 ├─ Sidebar                      (≥ 820px)
 ├─ MobileTopBar / MobileTabBar  (< 820px)
 ├─ main
-│  ├─ LayoutSwitcher
 │  ├─ BriefingCard
 │  └─ FeedPost × 3
-│     └─ <selected layout>       e.g. InstagramStyleLayout
-│        ├─ PostHeader pieces    (Byline, TopicPill, LocationPill, MoreButton, MoreMenu)
-│        ├─ PostCarousel         (parts: WhatHappenedPart / StoryImage, WhyPart, ReadMorePart)
-│        │  ├─ ReadMorePart      └─ NovaChatLog + NovaComposer (the Ask Nova chat)
-│        │  └─ CarouselArrows, CounterPill
-│        ├─ PartDots             (progress dots; Instagram Style has a ⋯ MoreMenu with "Not interested")
-│        └─ ReactionBar          (ActionButton, AskNovaButton)
+│     ├─ PostHeader             (byline, topic + location pills, ⋯ menu with "Not interested")
+│     ├─ PostCarousel           (parts: WhatHappenedPart, WhyPart, ReadMorePart)
+│     │  ├─ ReadMorePart        └─ NovaChatLog + NovaComposer (the Ask Nova chat)
+│     │  └─ CarouselArrows, CounterPill
+│     ├─ PartDots               (progress dots)
+│     └─ ReactionBar            (ActionButton, AskNovaButton)
 ```
 
-`FeedPost` owns the state of a post: carousel position, like/dislike/save, the Ask Nova conversation and hidden. It shares that state through `PostContext`, and every piece reads it with `usePost()`. That's why switching layouts keeps your place in the story, and your chat.
+`FeedPost` owns the state of a post: carousel position, like/dislike/save, the Ask Nova conversation and hidden. It shares that state through `PostContext`, and every piece reads it with `usePost()`.
 
 ### Ask Nova lives inside the post
 
 Ask Nova is part 3 of every post ("Read more"). Below the source and the other perspectives, the conversation appears, with the suggestion chips and a chat input pinned to the bottom of the part.
 
-Every Ask Nova button in a post (the pill, the round button and "Ask") calls `actions.askNova(question?)`. That jumps to part 3, focuses the chat input, and sends the question if one was given.
+Every Ask Nova button in a post calls `actions.askNova(question?)`. That jumps to part 3, focuses the chat input, and sends the question if one was given.
 
 ## Design tokens
 
@@ -84,54 +81,13 @@ All colours, radii, fonts and key sizes live in **`src/styles/tokens.css`** as C
 
 The fonts are Bricolage Grotesque for headlines and Instrument Sans for everything else. They're self-hosted through `@fontsource` (imported in `main.tsx`), so the app doesn't need to load them from Google.
 
-## Post layouts
+## The post ("Headline first")
 
-The switcher above the feed changes every post between 4 layouts: Instagram Style (the default), Headline first, Poster and Flipbook. Your choice is saved in `localStorage` under `vnaana.postLayout`.
+Every post has the same design, built in `FeedPost.tsx`: a top bar (byline, topic and location pills, ⋯ menu), then a 3-part carousel. In part 1 the headline and summary come before the image, and they swipe away together. Below the carousel are the progress dots, then heart / share / Ask Nova.
 
-### Adding a new layout
+The title is the `h2` with `id={titleId}`, so the post has an accessible name.
 
-1. Create `src/components/FeedPost/layouts/MyLayout.tsx` (and `MyLayout.module.css`):
-
-   ```tsx
-   import { PostCarousel } from '../PostCarousel'
-   import { Byline, TopicPill } from '../PostHeader'
-   import { usePost } from '../PostContext'
-   import { ReactionBar } from '../ReactionBar'
-   import { ReadMorePart, StoryImage, WhyPart } from '../parts/Parts'
-   import shared from './shared.module.css'
-
-   export function MyLayout() {
-     const { story, titleId } = usePost()
-     return (
-       <>
-         <header className={shared.header}>
-           <Byline />
-           <TopicPill />
-         </header>
-         <PostCarousel parts={[<StoryImage />, <WhyPart />, <ReadMorePart />]} />
-         <div className={shared.body}>
-           <h2 id={titleId} className={shared.headline}>{story.title}</h2>
-           <p className={shared.summary}>{story.summary}</p>
-         </div>
-         <ReactionBar kinds={['like', 'dislike', 'notInterested', 'share']} ask="pill" />
-       </>
-     )
-   }
-   ```
-
-2. Register it in `src/components/FeedPost/layouts/index.ts`:
-
-   ```ts
-   myLayout: { label: 'My layout', component: MyLayout },
-   ```
-
-   Add `wide: true` if it needs the 960px feed column.
-
-That's all. The switcher picks it up automatically.
-
-Every layout must show the image, the title and short description, like / dislike / not interested / share, the author and publisher, the topic and/or location, the 3 parts with arrows and progress, and Ask Nova. Use the `h2` with `id={titleId}` for the title, so the post has an accessible name.
-
-**Sizing tip:** set the carousel height with `--parts-h` in your layout's CSS. To adjust for narrow feeds, use `@container feed (max-width: 520px)`, not a viewport media query.
+**Sizing:** the carousel height is set with `--parts-h` in `FeedPost.module.css`. Narrow feeds are adjusted with `@container feed (max-width: 520px)`, not a viewport media query.
 
 ## Connecting real AI later
 
@@ -147,4 +103,4 @@ The chat (`src/hooks/useNovaChat.ts`) only calls `askNova(storyId, question)` in
 
 - All stories, publishers, people and links are **fictional**. Links use the reserved `.example` domain.
 - The briefing progress bar has one segment per story in the feed (3 here), not a fixed 5.
-- Text parts (Why it matters / Read more) have a fixed height so the feed never jumps. In the smaller layouts, extra text scrolls inside the part.
+- Text parts (Why it matters / Read more) have a fixed height so the feed never jumps. Extra text scrolls inside the part.

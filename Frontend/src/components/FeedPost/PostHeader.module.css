@@ -1,5 +1,5 @@
 /*
- * Instagram Style layout top bar: byline | labels | ⋯
+ * Top bar: byline | labels | ⋯
  * On narrow feeds the labels drop to their own line under the byline.
  */
 .header {
@@ -61,24 +61,6 @@
   box-shadow: 0 8px 28px rgba(14, 17, 22, 0.16);
 }
 
-.menu[data-opens='up'] {
-  top: auto;
-  bottom: calc(100% + 4px);
-}
-
-.menu[data-opens='left'] {
-  top: 0;
-  right: calc(100% + 8px);
-}
-
-/* Round white button, matching the Poster button column */
-.floatingButton,
-.floatingButton:hover {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-float);
-}
-
 .menuItem {
   display: flex;
   align-items: flex-start;
@@ -122,6 +104,8 @@
   display: inline-grid;
   place-items: center;
   flex: none;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--ink);
   color: #fff;
@@ -164,7 +148,7 @@
   min-width: 0;
 }
 
-/* Non-interactive label pill (topic, location). Solid background so it reads on top of images too. */
+/* Non-interactive label pill (topic, location) */
 .pill {
   display: inline-flex;
   align-items: center;

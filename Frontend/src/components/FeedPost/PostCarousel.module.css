@@ -5,7 +5,7 @@
   overflow: hidden;
 }
 
-/* Phones: start at the layout's height, but shrink when the screen is short */
+/* Phones: start at the post's height, but shrink when the screen is short */
 @media (max-width: 819.98px) {
   .wrap.wrap {
     flex: 0 1 var(--parts-h, 520px);
@@ -16,10 +16,10 @@
 
 /*
  * Text parts read these variables for their padding, so they never
- * sit underneath the arrows or other overlays.
+ * sit underneath the arrows.
  */
 .viewport {
-  --part-pad-x: 20px;
+  --part-pad-x: 64px;
   --part-pad-bottom: 20px;
   position: relative;
   height: 100%;
@@ -31,12 +31,8 @@
   outline-offset: -3px;
 }
 
-.wrap[data-arrows='overlay'] .viewport {
-  --part-pad-x: 64px;
-}
-
 @container parts (max-width: 520px) {
-  .wrap[data-arrows='overlay'] .viewport {
+  .viewport {
     --part-pad-x: 18px;
     --part-pad-bottom: 66px;
     /* Part 3: the chat input moves right of the "previous" arrow instead */

@@ -3,23 +3,14 @@ import { CarouselArrows, CounterPill } from './CarouselControls'
 import { PART_LABELS, usePost } from './PostContext'
 import styles from './PostCarousel.module.css'
 
-type PartPadding = { top?: number; right?: number; bottom?: number }
+type PartPadding = { top?: number; bottom?: number }
 
 type Props = {
   /** One element per part: What happened, Why it matters, Read more. */
   parts: ReactNode[]
-  /** Layout class that sets the size (--parts-h) and shape. */
+  /** Class that sets the size (--parts-h). */
   className?: string
-  arrows?: 'overlay' | 'none'
-  /**
-   * "auto": arrows at --arrow-top (default: centred); on narrow carousels they move to the bottom corners.
-   * "pinned": on part 1 the arrows stay at --arrow-top on narrow carousels too.
-   */
-  arrowPosition?: 'auto' | 'pinned'
-  showCounter?: boolean
-  /** Extra things drawn on top (pills, progress bars…). */
-  overlay?: ReactNode
-  /** Extra room inside the text parts, e.g. to clear overlays. */
+  /** Extra room inside the text parts, e.g. to clear the "1 / 3" pill. */
   partPadding?: PartPadding
 }
 
@@ -27,26 +18,18 @@ type Props = {
  * The side-to-side story carousel. Every part has the same height,
  * so moving between parts never changes the size of the post.
  * Arrow keys and touch swipes work when it has focus / is touched.
+ * The arrows are vertically centred; on narrow carousels they move to the bottom corners.
  */
-export function PostCarousel({
-  parts,
-  className = '',
-  arrows = 'overlay',
-  arrowPosition = 'auto',
-  showCounter = false,
-  overlay,
-  partPadding,
-}: Props) {
+export function PostCarousel({ parts, className = '', partPadding }: Props) {
   const { story, carousel, partIds } = usePost()
 
   const paddingVars = {
     '--part-pad-top': partPadding?.top && `${partPadding.top}px`,
-    '--part-pad-right': partPadding?.right && `${partPadding.right}px`,
     '--part-pad-bottom': partPadding?.bottom && `${partPadding.bottom}px`,
   } as CSSProperties
 
   return (
-    <div className={`${styles.wrap} ${className}`} data-arrows={arrows} data-arrow-position={arrowPosition}>
+    <div className={`${styles.wrap} ${className}`}>
       <div
         className={styles.viewport}
         style={paddingVars}
@@ -74,9 +57,8 @@ export function PostCarousel({
         </div>
       </div>
 
-      {overlay}
-      {showCounter && <CounterPill />}
-      {arrows === 'overlay' && <CarouselArrows />}
+      <CounterPill />
+      <CarouselArrows />
 
       <p className="sr-only" aria-live="polite">
         Part {carousel.index + 1} of {carousel.count}: {PART_LABELS[carousel.index]}

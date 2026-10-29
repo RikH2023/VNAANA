@@ -2,25 +2,30 @@ import { useEffect, useRef, useState } from 'react'
 import { useCarousel } from '../../hooks/useCarousel'
 import { useNovaChat } from '../../hooks/useNovaChat'
 import type { Story } from '../../types'
-import { POST_LAYOUTS } from './layouts'
-import type { PostLayoutKey } from './layouts'
+import { PartDots } from './CarouselControls'
+import { PostCarousel } from './PostCarousel'
 import { ASK_NOVA_PART, PART_LABELS, PostContext } from './PostContext'
+import { PostHeader } from './PostHeader'
+import { ReactionBar } from './ReactionBar'
+import { ReadMorePart, WhatHappenedPart, WhyPart } from './parts/Parts'
 import { usePostActions } from './usePostActions'
 import styles from './FeedPost.module.css'
 
 type Props = {
   story: Story
-  layout: PostLayoutKey
   /** Called when the user opens the story (moves past part 1, reads more or asks Nova). */
   onOpened: (storyId: string) => void
 }
 
 /*
  * One news story in the feed. Holds the state (carousel, reactions, Ask Nova
- * chat, hidden) and renders whichever layout is selected. Because the state
- * lives here, switching layouts keeps the current part, likes and the chat.
+ * chat, hidden) and shares it with the pieces through PostContext.
+ *
+ * Layout: top bar, then a 3-part carousel whose part 1 shows the headline and
+ * summary before the image (they swipe away together), progress dots, then
+ * heart / share / Ask Nova.
  */
-export function FeedPost({ story, layout, onOpened }: Props) {
+export function FeedPost({ story, onOpened }: Props) {
   const carousel = useCarousel(PART_LABELS.length)
   const chat = useNovaChat(story.id)
   const [hidden, setHidden] = useState(false)
@@ -68,14 +73,25 @@ export function FeedPost({ story, layout, onOpened }: Props) {
     )
   }
 
-  const Layout = POST_LAYOUTS[layout].component
   const titleId = `${story.id}-title`
   const partIds = PART_LABELS.map((_, i) => `${story.id}-part-${i + 1}`)
 
   return (
     <PostContext.Provider value={{ story, carousel, actions, chat, composerFocusRequest, titleId, partIds }}>
-      <article ref={postRef} className={styles.post} data-layout={layout} aria-labelledby={titleId} tabIndex={-1}>
-        <Layout />
+      <article ref={postRef} className={styles.post} aria-labelledby={titleId} tabIndex={-1}>
+        <PostHeader />
+        <PostCarousel
+          className={styles.carousel}
+          // Room for the "1 / 3" pill above the text and the Why / Read more panels
+          partPadding={{ top: 52 }}
+          parts={[<WhatHappenedPart />, <WhyPart />, <ReadMorePart />]}
+        />
+        <div className={styles.dotsRow}>
+          <PartDots />
+        </div>
+        <footer className={styles.actionsFooter}>
+          <ReactionBar kinds={['like', 'share']} />
+        </footer>
       </article>
     </PostContext.Provider>
   )

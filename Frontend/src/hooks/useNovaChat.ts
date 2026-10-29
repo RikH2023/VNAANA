@@ -7,10 +7,7 @@ export type ChatMessage =
   | { id: number; from: 'nova'; answer: NovaAnswer }
   | { id: number; from: 'nova'; error: string }
 
-/*
- * The Ask Nova conversation for one post.
- * Lives in FeedPost, so the conversation survives switching layouts.
- */
+/* The Ask Nova conversation for one post. Lives in FeedPost. */
 export function useNovaChat(storyId: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [pending, setPending] = useState(false)

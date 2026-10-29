@@ -26,7 +26,7 @@
   outline: none;
 }
 
-/* Layout switcher + briefing above the first post */
+/* Nova's briefing above the first post */
 .intro {
   padding: 24px 32px 0;
   scroll-snap-align: start;
@@ -47,7 +47,7 @@
   min-height: 0;
 }
 
-/* The feed column. Container queries in the post layouts measure this width. */
+/* The feed column. Container queries in the post measure this width. */
 .column {
   container: feed / inline-size;
   display: grid;
@@ -56,10 +56,6 @@
   width: 100%;
   max-width: var(--feed-w);
   margin-inline: auto;
-}
-
-.column[data-wide='true'] {
-  max-width: var(--feed-w-wide);
 }
 
 .feedEnd {

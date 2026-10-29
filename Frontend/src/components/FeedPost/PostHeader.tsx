@@ -5,22 +5,18 @@ import { TOPIC_ICONS } from '../../data/topics'
 import { usePost } from './PostContext'
 import styles from './PostHeader.module.css'
 
-/*
- * Small pieces that describe a post (who, when, what, where).
- * The Instagram Style layout uses the full <PostHeader>; other layouts
- * combine the pieces in their own way.
- */
+/* The post's top bar and the small pieces it is made of (who, when, what, where). */
 
-export function PublisherAvatar({ size = 40 }: { size?: number }) {
+function PublisherAvatar() {
   const { story } = usePost()
   return (
-    <span className={styles.avatar} style={{ width: size, height: size }} aria-hidden="true">
+    <span className={styles.avatar} aria-hidden="true">
       {story.publisher.initials}
     </span>
   )
 }
 
-export function PublisherName() {
+function PublisherName() {
   const { story } = usePost()
   return (
     <span className={styles.publisher}>
@@ -35,7 +31,7 @@ export function PublisherName() {
 }
 
 /* Avatar + publisher + "By author · time" in one compact block. */
-export function Byline({ showTime = true }: { showTime?: boolean }) {
+function Byline() {
   const { story } = usePost()
   return (
     <div className={styles.byline}>
@@ -43,15 +39,14 @@ export function Byline({ showTime = true }: { showTime?: boolean }) {
       <div className={styles.who}>
         <PublisherName />
         <span className={styles.meta}>
-          By {story.author}
-          {showTime && ` · ${story.publishedAgo}`}
+          By {story.author} · {story.publishedAgo}
         </span>
       </div>
     </div>
   )
 }
 
-export function TopicPill() {
+function TopicPill() {
   const { story } = usePost()
   const Icon = TOPIC_ICONS[story.topic]
   return (
@@ -62,7 +57,7 @@ export function TopicPill() {
   )
 }
 
-export function LocationPill() {
+function LocationPill() {
   const { story } = usePost()
   if (!story.location) return null
   return (
@@ -74,21 +69,11 @@ export function LocationPill() {
   )
 }
 
-export function MoreButton() {
-  return (
-    <button type="button" className={styles.iconButton} aria-label="More options">
-      <Ellipsis size={20} aria-hidden="true" />
-    </button>
-  )
-}
-
 /*
  * "⋯" button with a small menu of post options.
  * Esc, clicking outside or tabbing away closes it.
- * `opens` sets the direction, so the menu is never cut off by the card edge.
- * `floating` gives the button the round white look of the Poster button column.
  */
-export function MoreMenu({ opens = 'down', floating = false }: { opens?: 'down' | 'up' | 'left'; floating?: boolean }) {
+function MoreMenu() {
   const { story, actions } = usePost()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -127,7 +112,7 @@ export function MoreMenu({ opens = 'down', floating = false }: { opens?: 'down' 
       <button
         ref={buttonRef}
         type="button"
-        className={`${styles.iconButton} ${floating ? styles.floatingButton : ''}`}
+        className={styles.iconButton}
         aria-label="More options"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -137,7 +122,7 @@ export function MoreMenu({ opens = 'down', floating = false }: { opens?: 'down' 
         <Ellipsis size={20} aria-hidden="true" />
       </button>
       {open && (
-        <div id={menuId} role="menu" aria-label="Post options" className={styles.menu} data-opens={opens}>
+        <div id={menuId} role="menu" aria-label="Post options" className={styles.menu}>
           <button
             ref={firstItemRef}
             type="button"
@@ -160,10 +145,7 @@ export function MoreMenu({ opens = 'down', floating = false }: { opens?: 'down' 
   )
 }
 
-/*
- * The top bar used by the Instagram Style layout:
- * byline, then the label pills (topic, location), then the ⋯ menu.
- */
+/* The top bar: byline, then the label pills (topic, location), then the ⋯ menu. */
 export function PostHeader() {
   return (
     <header className={styles.header}>

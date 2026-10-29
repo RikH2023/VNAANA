@@ -1,23 +1,16 @@
 /* ---------- Arrows ---------- */
 
+/* Floats over the carousel, vertically centred */
 .arrows {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-/* Floats over the carousel at --arrow-top (set by the layout). */
-.overlay {
   position: absolute;
   z-index: 2;
   inset-inline: 10px;
-  top: var(--arrow-top, 50%);
+  top: 50%;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
   transform: translateY(-50%);
   pointer-events: none;
-}
-
-.overlay .arrow {
-  pointer-events: auto;
 }
 
 /*
@@ -25,15 +18,13 @@
  * parts they sit on a solid bar, so scrolling text never runs under them.
  */
 @container parts (max-width: 520px) {
-  /* "pinned" carousels (Poster) keep the arrows at --arrow-top on part 1 */
-  [data-arrow-position='auto'] > .overlay,
-  [data-arrow-position='pinned'] > .overlay:not([data-part='0']) {
+  .arrows {
     top: auto;
     bottom: 10px;
     transform: none;
   }
 
-  .overlay[data-text-part='true'] {
+  .arrows[data-text-part='true'] {
     inset-inline: 0;
     bottom: 0;
     padding: 8px 10px;
@@ -42,11 +33,8 @@
   }
 }
 
-.inline {
-  flex: none;
-}
-
 .arrow {
+  pointer-events: auto;
   display: grid;
   place-items: center;
   width: var(--tap);
@@ -74,14 +62,6 @@
   margin-left: auto;
   background: var(--ink);
   color: #fff;
-}
-
-.inline .arrow {
-  box-shadow: none;
-}
-
-.inline .prev {
-  border: 1px solid var(--line-strong);
 }
 
 /* ---------- Counter pill "1 / 3" ---------- */
@@ -122,14 +102,6 @@
   background: var(--accent);
 }
 
-/* Dots placed on top of an image get a solid backing so they stay visible. */
-.onImage {
-  padding: 7px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--shadow-float);
-}
-
 /* ---------- Segments ---------- */
 
 .segments {
@@ -147,12 +119,4 @@
 
 .segment[data-on='true'] {
   background: #fff;
-}
-
-.segments[data-tone='light'] .segment {
-  background: var(--line-strong);
-}
-
-.segments[data-tone='light'] .segment[data-on='true'] {
-  background: var(--ink);
 }
