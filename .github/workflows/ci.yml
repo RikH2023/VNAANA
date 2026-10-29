@@ -39,3 +39,6 @@ jobs:
 
             - name: Run unit tests
               run: python -m pytest -c Backend/pytest.ini Backend/tests/unit -v
+
+            - name: Check architectural boundaries
+              run: lint-imports
