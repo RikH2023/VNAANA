@@ -1,0 +1,82 @@
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 22px 56px 22px 24px; /* right padding keeps text clear of the close button */
+  border-radius: var(--radius-card);
+  background: var(--ink);
+  color: #fff;
+  --focus: #fff;
+}
+
+.dismiss {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 50%;
+  color: var(--on-dark-muted);
+}
+
+.dismiss:hover {
+  background: var(--seg-off);
+  color: #fff;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--on-dark-muted);
+}
+
+.greeting {
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.segments {
+  flex: 1;
+}
+
+.meta {
+  flex: none;
+  font-size: var(--text-meta);
+  color: var(--on-dark-muted);
+}
+
+@media (max-width: 480px) {
+  .card {
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+  }
+  .greeting {
+    font-size: 20px;
+  }
+
+  .progressRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+}

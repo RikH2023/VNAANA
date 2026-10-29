@@ -1,0 +1,59 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* ---------- Reaction buttons ---------- */
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border-radius: 50%;
+  color: var(--muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.action:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.action[aria-pressed='true'] {
+  color: var(--accent);
+}
+
+/* ---------- Ask Nova ---------- */
+
+.ask {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 0 18px 0 15px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: filter 0.15s ease;
+}
+
+.ask:hover {
+  filter: brightness(1.1);
+}
