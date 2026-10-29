@@ -25,6 +25,9 @@
   --broad-bg: #FDEBDD;
   --broad-ink: #9A3F06;     /* "Don't miss" tag */
 
+  /* Form errors */
+  --error: #B42318;
+
   /* Dark surfaces (briefing card) */
   --on-dark-muted: #C7CBD4;
   --seg-off: #3A3F4A;

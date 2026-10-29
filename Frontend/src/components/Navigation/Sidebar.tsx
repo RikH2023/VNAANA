@@ -1,4 +1,4 @@
-import { Compass, Settings, Sparkles } from 'lucide-react'
+import { Compass, LogIn, Sparkles } from 'lucide-react'
 import { TOPICS, TOPIC_ICONS } from '../../data/topics'
 import type { User } from '../../types'
 import { Logo } from './Logo'
@@ -58,17 +58,11 @@ export function Sidebar({ user }: { user: User }) {
         </ul>
       </section>
 
-      <div className={styles.profile}>
-        <span className={styles.profileAvatar} aria-hidden="true">
-          {user.initials}
-        </span>
-        <span className={styles.profileText}>
-          <span className={styles.profileName}>{user.name}</span>
-          <span className={styles.profileHandle}>@{user.username}</span>
-        </span>
-        <button type="button" className={styles.iconButton} aria-label="Settings">
-          <Settings size={20} aria-hidden="true" />
-        </button>
+      <div className={styles.account}>
+        <a href="#login" className={styles.loginButton}>
+          <LogIn size={20} aria-hidden="true" />
+          Log in
+        </a>
       </div>
     </aside>
   )

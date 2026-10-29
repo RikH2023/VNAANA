@@ -184,61 +184,29 @@
   color: var(--muted);
 }
 
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* Bottom of the sidebar, where the profile will go once users can log in */
+.account {
   margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--line);
 }
 
-.profileAvatar {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--foryou-bg);
-  color: var(--foryou-ink);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.profileText {
+.loginButton {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.profileName {
-  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap);
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #fff;
+  font-size: 15px;
   font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-decoration: none;
 }
 
-.profileHandle {
-  font-size: var(--text-meta);
-  color: var(--muted);
-}
-
-.iconButton {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: var(--tap);
-  height: var(--tap);
-  border-radius: 50%;
-  color: var(--muted);
-}
-
-.iconButton:hover {
-  background: var(--surface-2);
-  color: var(--ink);
+.loginButton:hover {
+  background: #262b34;
 }
 
 /* ---------- Mobile bars (below 820px) ---------- */

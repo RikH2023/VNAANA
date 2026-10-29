@@ -1,4 +1,4 @@
-import { Compass, LayoutGrid, Sparkles, User } from 'lucide-react'
+import { Compass, LayoutGrid, LogIn, Sparkles } from 'lucide-react'
 import { Logo } from './Logo'
 import { SearchField } from './SearchField'
 import styles from './Navigation.module.css'
@@ -17,7 +17,7 @@ const TABS = [
   { label: 'For You', href: '/', Icon: Sparkles, current: true },
   { label: 'Explore', href: '#explore', Icon: Compass },
   { label: 'Topics', href: '#topics', Icon: LayoutGrid },
-  { label: 'Profile', href: '#profile', Icon: User },
+  { label: 'Log in', href: '#login', Icon: LogIn },
 ]
 
 /* Bottom tab bar for screens under 820px. */
