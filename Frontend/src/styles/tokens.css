@@ -25,10 +25,12 @@
   --broad-bg: #FDEBDD;
   --broad-ink: #9A3F06;     /* "Don't miss" tag */
 
-  /* Dark surfaces (briefing card, poster panel) */
+  /* Dark surfaces (briefing card) */
   --on-dark-muted: #C7CBD4;
   --seg-off: #3A3F4A;
-  --poster-panel: rgba(14, 17, 22, 0.92);
+
+  /* Poster layout: solid light panel over the image (never a gradient) */
+  --poster-panel: rgba(255, 255, 255, 0.95);
 
   /* Shape */
   --radius-card: 22px;

@@ -35,10 +35,10 @@ export function PublisherName() {
 }
 
 /* Avatar + publisher + "By author · time" in one compact block. */
-export function Byline({ showTime = true, onDark = false }: { showTime?: boolean; onDark?: boolean }) {
+export function Byline({ showTime = true }: { showTime?: boolean }) {
   const { story } = usePost()
   return (
-    <div className={`${styles.byline} ${onDark ? styles.onDark : ''}`}>
+    <div className={styles.byline}>
       <PublisherAvatar />
       <div className={styles.who}>
         <PublisherName />
@@ -85,8 +85,10 @@ export function MoreButton() {
 /*
  * "⋯" button with a small menu of post options.
  * Esc, clicking outside or tabbing away closes it.
+ * `opens` sets the direction, so the menu is never cut off by the card edge.
+ * `floating` gives the button the round white look of the Poster button column.
  */
-export function MoreMenu() {
+export function MoreMenu({ opens = 'down', floating = false }: { opens?: 'down' | 'up' | 'left'; floating?: boolean }) {
   const { story, actions } = usePost()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -125,7 +127,7 @@ export function MoreMenu() {
       <button
         ref={buttonRef}
         type="button"
-        className={styles.iconButton}
+        className={`${styles.iconButton} ${floating ? styles.floatingButton : ''}`}
         aria-label="More options"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -135,7 +137,7 @@ export function MoreMenu() {
         <Ellipsis size={20} aria-hidden="true" />
       </button>
       {open && (
-        <div id={menuId} role="menu" aria-label="Post options" className={styles.menu}>
+        <div id={menuId} role="menu" aria-label="Post options" className={styles.menu} data-opens={opens}>
           <button
             ref={firstItemRef}
             type="button"

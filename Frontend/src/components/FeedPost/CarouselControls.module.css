@@ -25,7 +25,9 @@
  * parts they sit on a solid bar, so scrolling text never runs under them.
  */
 @container parts (max-width: 520px) {
-  .overlay {
+  /* "pinned" carousels (Poster) keep the arrows at --arrow-top on part 1 */
+  [data-arrow-position='auto'] > .overlay,
+  [data-arrow-position='pinned'] > .overlay:not([data-part='0']) {
     top: auto;
     bottom: 10px;
     transform: none;
@@ -145,4 +147,12 @@
 
 .segment[data-on='true'] {
   background: #fff;
+}
+
+.segments[data-tone='light'] .segment {
+  background: var(--line-strong);
+}
+
+.segments[data-tone='light'] .segment[data-on='true'] {
+  background: var(--ink);
 }

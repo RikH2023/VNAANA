@@ -27,11 +27,6 @@
   outline-offset: 3px;
 }
 
-/* The Poster layout is a dark card */
-.post[data-layout='poster'] {
-  border-color: var(--ink);
-}
-
 /* The small row that replaces a post after "Not interested" */
 .hidden {
   display: flex;

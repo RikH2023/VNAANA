@@ -20,7 +20,11 @@ export function CarouselArrows({ placement = 'overlay', children }: ArrowsProps)
   return (
     // data-text-part: part 2 is scrolling text, so the overlay gets a solid bar on small screens.
     // Part 3 doesn't need one: its chat input makes room for the arrow.
-    <div className={`${styles.arrows} ${styles[placement]}`} data-text-part={!carousel.isFirst && !carousel.isLast}>
+    <div
+      className={`${styles.arrows} ${styles[placement]}`}
+      data-part={carousel.index}
+      data-text-part={!carousel.isFirst && !carousel.isLast}
+    >
       <button
         type="button"
         className={`${styles.arrow} ${styles.prev}`}
@@ -65,10 +69,18 @@ export function PartDots({ tone = 'light' }: { tone?: 'light' | 'onImage' }) {
   )
 }
 
+type SegmentsProps = {
+  total: number
+  filled: number
+  /** "dark" for dark backgrounds (briefing card), "light" for light ones (Poster) */
+  tone?: 'dark' | 'light'
+  className?: string
+}
+
 /* A row of bars. Used by the Poster layout and the briefing card. */
-export function Segments({ total, filled, className = '' }: { total: number; filled: number; className?: string }) {
+export function Segments({ total, filled, tone = 'dark', className = '' }: SegmentsProps) {
   return (
-    <span className={`${styles.segments} ${className}`} aria-hidden="true">
+    <span className={`${styles.segments} ${className}`} data-tone={tone} aria-hidden="true">
       {Array.from({ length: total }, (_, i) => (
         <span key={i} className={styles.segment} data-on={i < filled} />
       ))}

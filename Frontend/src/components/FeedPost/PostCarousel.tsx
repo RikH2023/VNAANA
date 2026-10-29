@@ -11,6 +11,11 @@ type Props = {
   /** Layout class that sets the size (--parts-h) and shape. */
   className?: string
   arrows?: 'overlay' | 'none'
+  /**
+   * "auto": arrows at --arrow-top (default: centred); on narrow carousels they move to the bottom corners.
+   * "pinned": on part 1 the arrows stay at --arrow-top on narrow carousels too.
+   */
+  arrowPosition?: 'auto' | 'pinned'
   showCounter?: boolean
   /** Extra things drawn on top (pills, progress bars…). */
   overlay?: ReactNode
@@ -23,7 +28,15 @@ type Props = {
  * so moving between parts never changes the size of the post.
  * Arrow keys and touch swipes work when it has focus / is touched.
  */
-export function PostCarousel({ parts, className = '', arrows = 'overlay', showCounter = false, overlay, partPadding }: Props) {
+export function PostCarousel({
+  parts,
+  className = '',
+  arrows = 'overlay',
+  arrowPosition = 'auto',
+  showCounter = false,
+  overlay,
+  partPadding,
+}: Props) {
   const { story, carousel, partIds } = usePost()
 
   const paddingVars = {
@@ -33,7 +46,7 @@ export function PostCarousel({ parts, className = '', arrows = 'overlay', showCo
   } as CSSProperties
 
   return (
-    <div className={`${styles.wrap} ${className}`} data-arrows={arrows}>
+    <div className={`${styles.wrap} ${className}`} data-arrows={arrows} data-arrow-position={arrowPosition}>
       <div
         className={styles.viewport}
         style={paddingVars}
