@@ -1,8 +1,6 @@
 import type { ComponentType } from 'react'
-import { AnchorLedLayout } from './AnchorLed'
 import { HeadlineFirstLayout } from './HeadlineFirst'
 import { InstagramStyleLayout } from './InstagramStyle'
-import { PeekLayout } from './Peek'
 import { PosterLayout } from './Poster'
 import { SplitLayout } from './Split'
 
@@ -23,8 +21,6 @@ export const POST_LAYOUTS = {
   headlineFirst: { label: 'Headline first', component: HeadlineFirstLayout },
   poster: { label: 'Poster', component: PosterLayout },
   split: { label: 'Split', component: SplitLayout, wide: true },
-  peek: { label: 'Peek', component: PeekLayout },
-  anchorLed: { label: 'Anchor-led', component: AnchorLedLayout },
 } satisfies Record<string, PostLayout>
 
 export type PostLayoutKey = keyof typeof POST_LAYOUTS

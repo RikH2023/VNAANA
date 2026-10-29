@@ -73,7 +73,7 @@ export function AskNovaButton({ variant = 'pill' }: { variant?: AskVariant }) {
 }
 
 /*
- * Always-visible question field (Split, Anchor-led). Submitting jumps to the
+ * Always-visible question field (Split). Submitting jumps to the
  * chat in part 3 and sends the typed question, or `fallbackQuestion` when empty.
  */
 export function AskNovaInput({ placeholder, fallbackQuestion }: { placeholder: string; fallbackQuestion?: string }) {
