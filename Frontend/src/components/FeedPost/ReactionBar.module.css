@@ -47,25 +47,6 @@
   background: var(--surface-2);
 }
 
-.labelled {
-  padding: 0 14px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.labelled:hover {
-  border-color: var(--ink);
-}
-
-.labelled[aria-pressed='true'] {
-  border-color: var(--accent);
-  background: var(--foryou-bg);
-  color: var(--foryou-ink);
-}
-
 /* Round white buttons that float over an image (Poster layout) */
 .floating {
   border-radius: 50%;
@@ -112,56 +93,4 @@
 .ask_round {
   border-radius: 50%;
   box-shadow: var(--shadow-float);
-}
-
-/* ---------- Ask Nova input ---------- */
-
-.askForm {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 52px;
-  padding: 4px 4px 4px 16px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-}
-
-.askForm:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent);
-}
-
-.askFormIcon {
-  flex: none;
-  color: var(--accent);
-}
-
-.askInput {
-  flex: 1;
-  min-width: 0;
-  min-height: var(--tap);
-  padding: 0 6px;
-  border: 0;
-  background: transparent;
-  font-size: 15px;
-}
-
-.askInput::placeholder {
-  color: var(--muted);
-}
-
-.askInput:focus-visible {
-  outline: none;
-}
-
-.send {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: var(--tap);
-  height: var(--tap);
-  border-radius: 50%;
-  background: var(--ink);
-  color: #fff;
 }

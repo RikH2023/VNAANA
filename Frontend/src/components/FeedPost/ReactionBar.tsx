@@ -1,12 +1,11 @@
-import { useState } from 'react'
-import type { FormEvent, ReactNode } from 'react'
-import { Bookmark, Check, EyeOff, Heart, SendHorizontal, Share2, Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Bookmark, Check, EyeOff, Heart, Share2, Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { usePost } from './PostContext'
 import styles from './ReactionBar.module.css'
 
 export type ActionKind = 'like' | 'dislike' | 'notInterested' | 'share' | 'save'
-type ButtonVariant = 'icon' | 'labelled' | 'floating'
+type ButtonVariant = 'icon' | 'floating'
 type LikeIcon = 'thumb' | 'heart'
 
 type ActionButtonProps = {
@@ -28,7 +27,7 @@ export function ActionButton({ kind, variant = 'icon', likeIcon = 'thumb' }: Act
       pressed: actions.liked,
     },
     dislike: { label: 'Dislike', Icon: ThumbsDown, onClick: actions.toggleDislike, pressed: actions.disliked },
-    notInterested: { label: variant === 'labelled' ? 'Not for me' : 'Not interested', Icon: EyeOff, onClick: actions.hide },
+    notInterested: { label: 'Not interested', Icon: EyeOff, onClick: actions.hide },
     share: {
       label: actions.linkCopied ? 'Link copied' : 'Share',
       Icon: actions.linkCopied ? Check : Share2,
@@ -37,7 +36,6 @@ export function ActionButton({ kind, variant = 'icon', likeIcon = 'thumb' }: Act
     save: { label: actions.saved ? 'Saved' : 'Save', Icon: Bookmark, onClick: actions.toggleSave, pressed: actions.saved },
   }
   const { label, Icon, onClick, pressed } = config[kind]
-  const showLabel = variant === 'labelled'
 
   return (
     <button
@@ -45,11 +43,10 @@ export function ActionButton({ kind, variant = 'icon', likeIcon = 'thumb' }: Act
       className={`${styles.action} ${styles[variant]}`}
       onClick={onClick}
       aria-pressed={pressed}
-      aria-label={showLabel ? undefined : kind === 'notInterested' ? 'Not interested – show less like this' : label}
-      title={showLabel ? undefined : label}
+      aria-label={kind === 'notInterested' ? 'Not interested – show less like this' : label}
+      title={label}
     >
       <Icon size={20} aria-hidden="true" fill={pressed ? 'currentColor' : 'none'} />
-      {showLabel && <span>{label}</span>}
     </button>
   )
 }
@@ -69,42 +66,6 @@ export function AskNovaButton({ variant = 'pill' }: { variant?: AskVariant }) {
       {variant === 'pill' && 'Ask Nova'}
       {variant === 'short' && 'Ask'}
     </button>
-  )
-}
-
-/*
- * Always-visible question field (Split). Submitting jumps to the
- * chat in part 3 and sends the typed question, or `fallbackQuestion` when empty.
- */
-export function AskNovaInput({ placeholder, fallbackQuestion }: { placeholder: string; fallbackQuestion?: string }) {
-  const { story, actions } = usePost()
-  const [value, setValue] = useState('')
-  const inputId = `${story.id}-ask`
-
-  const onSubmit = (event: FormEvent) => {
-    event.preventDefault()
-    actions.askNova(value.trim() || fallbackQuestion)
-    setValue('')
-  }
-
-  return (
-    <form className={styles.askForm} onSubmit={onSubmit}>
-      <label htmlFor={inputId} className="sr-only">
-        Start a chat with Nova about this story
-      </label>
-      <Sparkles size={18} className={styles.askFormIcon} aria-hidden="true" />
-      <input
-        id={inputId}
-        className={styles.askInput}
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-        placeholder={placeholder}
-        autoComplete="off"
-      />
-      <button type="submit" className={styles.send} aria-label="Start chat with Nova">
-        <SendHorizontal size={18} aria-hidden="true" />
-      </button>
-    </form>
   )
 }
 

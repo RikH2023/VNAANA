@@ -1,8 +1,8 @@
 import type { ComponentType } from 'react'
+import { FlipbookLayout } from './Flipbook'
 import { HeadlineFirstLayout } from './HeadlineFirst'
 import { InstagramStyleLayout } from './InstagramStyle'
 import { PosterLayout } from './Poster'
-import { SplitLayout } from './Split'
 
 type PostLayout = {
   /** Name shown in the layout switcher */
@@ -20,7 +20,7 @@ export const POST_LAYOUTS = {
   instagramStyle: { label: 'Instagram Style', component: InstagramStyleLayout },
   headlineFirst: { label: 'Headline first', component: HeadlineFirstLayout },
   poster: { label: 'Poster', component: PosterLayout },
-  split: { label: 'Split', component: SplitLayout, wide: true },
+  flipbook: { label: 'Flipbook', component: FlipbookLayout, wide: true },
 } satisfies Record<string, PostLayout>
 
 export type PostLayoutKey = keyof typeof POST_LAYOUTS

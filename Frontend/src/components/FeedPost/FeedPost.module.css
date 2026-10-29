@@ -7,6 +7,15 @@
   box-shadow: var(--shadow-card);
 }
 
+/* Flipbook draws its own card (the book), so its arrows can sit below it */
+.post[data-layout='flipbook'] {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
 /*
  * Phones: one post per screen. The post may not be taller than the screen;
  * when space is short, only the carousel shrinks (text and buttons keep their size).

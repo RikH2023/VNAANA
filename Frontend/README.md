@@ -67,7 +67,7 @@ App
 │        │  ├─ ReadMorePart      └─ NovaChatLog + NovaComposer (the Ask Nova chat)
 │        │  └─ CarouselArrows, CounterPill
 │        ├─ PartDots             (progress dots; Instagram Style has a ⋯ MoreMenu with "Not interested")
-│        └─ ReactionBar          (ActionButton, AskNovaButton, AskNovaInput)
+│        └─ ReactionBar          (ActionButton, AskNovaButton)
 ```
 
 `FeedPost` owns the state of a post: carousel position, like/dislike/save, the Ask Nova conversation and hidden. It shares that state through `PostContext`, and every piece reads it with `usePost()`. That's why switching layouts keeps your place in the story, and your chat.
@@ -76,7 +76,7 @@ App
 
 Ask Nova is part 3 of every post ("Read more"). Below the source and the other perspectives, the conversation appears, with the suggestion chips and a chat input pinned to the bottom of the part.
 
-Every Ask Nova button in a post (the pill, the round button, "Ask", and the inline input in Split) calls `actions.askNova(question?)`. That jumps to part 3, focuses the chat input, and sends the question if one was given.
+Every Ask Nova button in a post (the pill, the round button and "Ask") calls `actions.askNova(question?)`. That jumps to part 3, focuses the chat input, and sends the question if one was given.
 
 ## Design tokens
 
@@ -86,7 +86,7 @@ The fonts are Bricolage Grotesque for headlines and Instrument Sans for everythi
 
 ## Post layouts
 
-The switcher above the feed changes every post between 4 layouts: Instagram Style (the default), Headline first, Poster and Split. Your choice is saved in `localStorage` under `vnaana.postLayout`.
+The switcher above the feed changes every post between 4 layouts: Instagram Style (the default), Headline first, Poster and Flipbook. Your choice is saved in `localStorage` under `vnaana.postLayout`.
 
 ### Adding a new layout
 
