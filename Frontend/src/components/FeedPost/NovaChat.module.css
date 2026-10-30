@@ -1,0 +1,163 @@
+/* ---------- Conversation ---------- */
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.intro {
+  font-size: var(--text-meta);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.prototype {
+  font-style: italic;
+}
+
+.user {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 9px 14px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.nova {
+  align-self: flex-start;
+  display: grid;
+  gap: 8px;
+  max-width: 92%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px 16px 16px 4px;
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.sources {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+
+.sources strong,
+.uncertain strong {
+  color: var(--ink);
+}
+
+.uncertain {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+
+.uncertain svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+
+.typingDots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.typingDots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1s infinite ease-in-out;
+}
+
+.typingDots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typingDots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Composer: chips + input, pinned to the bottom of the part ---------- */
+
+.composer {
+  flex: none;
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+/*
+ * On narrow carousels the "previous" arrow sits in the bottom-left corner,
+ * so the input moves over to make room for it (--composer-inset, set by PostCarousel).
+ */
+.form {
+  display: flex;
+  gap: 8px;
+  padding-left: var(--composer-inset, 0px);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: var(--tap);
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 15px;
+}
+
+.input::placeholder {
+  color: var(--muted);
+}
+
+.input:focus-visible {
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+
+.send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+}
+
+.send:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}

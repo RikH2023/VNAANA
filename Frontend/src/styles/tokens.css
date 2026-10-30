@@ -1,0 +1,57 @@
+/*
+ * Design tokens for VNAANA.
+ * Every colour, radius and font in the app comes from here.
+ * Change a value once and it updates everywhere.
+ */
+:root {
+  /* Surfaces */
+  --bg: #F4F5F7;            /* page background */
+  --surface: #FFFFFF;       /* cards, sidebar */
+  --surface-2: #F8F9FB;     /* inner panels (Why / Read more) */
+
+  /* Text & lines */
+  --ink: #0E1116;           /* main text, dark buttons, briefing card */
+  --body: #374151;          /* summaries */
+  --muted: #4B5563;         /* meta text */
+  --line: #E3E6EB;          /* borders, dividers */
+  --line-strong: #C9CED6;   /* chip / outline button borders */
+
+  /* Accent */
+  --accent: #3546F0;        /* Ask Nova, active tab underline, links */
+
+  /* Feed reason tags */
+  --foryou-bg: #E8EAFE;
+  --foryou-ink: #2433C4;    /* "For you" tag */
+  --broad-bg: #FDEBDD;
+  --broad-ink: #9A3F06;     /* "Don't miss" tag */
+
+  /* Form errors */
+  --error: #B42318;
+
+  /* Dark surfaces (briefing card) */
+  --on-dark-muted: #C7CBD4;
+  --seg-off: #3A3F4A;
+
+  /* Shape */
+  --radius-card: 22px;
+  --radius-ui: 12px;
+  --radius-pill: 999px;
+
+  /* Type */
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+
+  --text-headline: 30px;    /* headline in a post */
+  --text-summary: 17px;     /* summary in a post */
+  --text-meta: 13px;        /* meta text */
+
+  /* Sizing */
+  --tap: 44px;              /* minimum size of anything clickable */
+  --sidebar-w: 240px;
+  --feed-w: 680px;
+
+  /* Elevation & focus */
+  --shadow-card: 0 1px 2px rgba(14, 17, 22, 0.05), 0 4px 16px rgba(14, 17, 22, 0.05);
+  --shadow-float: 0 2px 10px rgba(14, 17, 22, 0.22);
+  --focus: var(--accent);
+}

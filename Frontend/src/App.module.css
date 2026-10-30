@@ -1,0 +1,135 @@
+/*
+ * The app fills exactly one screen. Only the feed scrolls, so it can
+ * snap to one post at a time.
+ * Desktop: sidebar | feed.  Mobile: top bar / feed / tab bar.
+ */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ---------- The snapping feed ---------- */
+
+.feed {
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-gutter: stable;
+}
+
+.feed:focus {
+  outline: none;
+}
+
+/* Nova's briefing above the first post */
+.intro {
+  padding: 24px 32px 0;
+  scroll-snap-align: start;
+}
+
+/* One post per screen. scroll-snap-stop stops a fast swipe from skipping posts. */
+.slide {
+  display: grid;
+  align-items: center;
+  min-height: 100%;
+  padding: 24px 32px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* A hidden ("Not interested") post shrinks to its small row instead of a full screen */
+.slide:has([data-hidden='true']) {
+  min-height: 0;
+}
+
+/* The feed column. Container queries in the post measure this width. */
+.column {
+  container: feed / inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* never wider than the screen */
+  gap: 16px;
+  width: 100%;
+  max-width: var(--feed-w);
+  margin-inline: auto;
+}
+
+.feedEnd {
+  padding: 24px 0 40px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  scroll-snap-align: end;
+}
+
+/* ---------- Skip link ---------- */
+
+.skipLink {
+  position: fixed;
+  z-index: 100;
+  top: 8px;
+  left: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-ui);
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus {
+  transform: none;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 819.98px) {
+  .app {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .feed {
+    flex: 1;
+    min-height: 0;
+    scrollbar-gutter: auto;
+  }
+
+  .intro {
+    padding: 16px 16px 0;
+  }
+
+  .slide {
+    padding: 12px 16px;
+  }
+}
+
+/*
+ * Phones: a post is never taller than the screen; the carousel shrinks instead
+ * (see FeedPost.module.css). On very short screens (under 700px) that would
+ * squeeze too much, so there posts keep their natural height and scroll.
+ */
+@media (max-width: 819.98px) and (min-height: 700px) {
+  .slide {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .slide:has([data-hidden='true']) {
+    height: auto;
+  }
+
+  .slide > .column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+  }
+}

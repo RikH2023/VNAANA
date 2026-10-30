@@ -1,0 +1,281 @@
+/* ---------- Logo ---------- */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: var(--radius-ui);
+}
+
+.logoMark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+/* ---------- Search ---------- */
+
+.search {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: var(--tap);
+  padding: 0 12px 0 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ui);
+  background: var(--surface-2);
+  font-size: 15px;
+}
+
+.searchInput::placeholder {
+  color: var(--muted);
+}
+
+.searchInput:focus-visible {
+  outline-offset: 0;
+  background: var(--surface);
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: var(--sidebar-w);
+  height: 100%;
+  padding: 20px 16px 16px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.mainNav {
+  display: grid;
+  gap: 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border-radius: var(--radius-ui);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navItem:hover {
+  background: var(--surface-2);
+}
+
+.navItem[aria-current='page'] {
+  background: var(--ink);
+  color: #fff;
+}
+
+.activeDot {
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--ink), 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+.topics {
+  display: grid;
+  gap: 4px;
+}
+
+.topicsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 6px;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.editLink {
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 0 8px;
+  border-radius: var(--radius-ui);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.editLink:hover {
+  text-decoration: underline;
+}
+
+.topicRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+  padding: 0 6px;
+  border-radius: var(--radius-ui);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.topicRow:hover {
+  background: var(--surface-2);
+}
+
+.topicIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.topicName {
+  flex: 1;
+  font-weight: 500;
+}
+
+.following {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Bottom of the sidebar, where the profile will go once users can log in */
+.account {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.loginButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap);
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.loginButton:hover {
+  background: #262b34;
+}
+
+/* ---------- Mobile bars (below 820px) ---------- */
+
+/* The app is a full-height column on mobile, so these bars just sit above and below the feed. */
+.topBar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.topBar .search {
+  flex: 1;
+  min-width: 0;
+}
+
+.tabBar {
+  flex: none;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.tabBar ul {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 60px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tab[aria-current='page'] {
+  color: var(--accent);
+}
+
+.tab:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Desktop shows the sidebar; smaller screens show the top and bottom bars */
+@media (min-width: 820px) {
+  .topBar,
+  .tabBar {
+    display: none;
+  }
+}
+
+@media (max-width: 819.98px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .wordmark {
+    display: none;
+  }
+}

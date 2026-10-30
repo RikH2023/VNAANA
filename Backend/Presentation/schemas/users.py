@@ -4,6 +4,7 @@ from typing import Any
 
 from pydantic import AliasChoices, BaseModel, Field
 
+from Backend.Logic.domain.story_reaction import Reaction
 from Backend.Presentation.schemas.common import ORMModel, TagRead
 
 
@@ -57,7 +58,7 @@ class EngagementEventCreate(BaseModel):
     session_id: uuid.UUID
     story_id: uuid.UUID | None = None
     article_id: uuid.UUID | None = None
-    event_type: str = Field(min_length=1, max_length=50, examples=["story_open"])
+    event_type: str = Field(min_length=1, max_length=50, examples=["share"])
     occurred_at: datetime | None = None
     active_duration_ms: int | None = Field(default=None, ge=0)
     metadata: dict[str, Any] | None = None
@@ -77,3 +78,13 @@ class EngagementEventRead(ORMModel):
     metadata: dict[str, Any] | None = Field(
         validation_alias=AliasChoices("event_metadata", "metadata")
     )
+
+
+class ReactionUpdate(BaseModel):
+    reaction: Reaction
+
+
+class StoryReactionRead(ORMModel):
+    story_id: uuid.UUID
+    reaction: Reaction
+    updated_at: datetime

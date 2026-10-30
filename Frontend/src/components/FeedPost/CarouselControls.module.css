@@ -1,0 +1,122 @@
+/* ---------- Arrows ---------- */
+
+/* Floats over the carousel, vertically centred */
+.arrows {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 10px;
+  top: 50%;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/*
+ * On narrow carousels the arrows move to the bottom corners. Over the text
+ * parts they sit on a solid bar, so scrolling text never runs under them.
+ */
+@container parts (max-width: 520px) {
+  .arrows {
+    top: auto;
+    bottom: 10px;
+    transform: none;
+  }
+
+  .arrows[data-text-part='true'] {
+    inset-inline: 0;
+    bottom: 0;
+    padding: 8px 10px;
+    border-top: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+}
+
+.arrow {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 50%;
+  box-shadow: var(--shadow-float);
+  transition: transform 0.15s ease;
+}
+
+.arrow:hover {
+  transform: scale(1.06);
+}
+
+.arrow[hidden] {
+  display: grid;
+  visibility: hidden;
+}
+
+.prev {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.next {
+  margin-left: auto;
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---------- Counter pill "1 / 3" ---------- */
+
+.counter {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Dots ---------- */
+
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.dot[data-active='true'] {
+  width: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* ---------- Segments ---------- */
+
+.segments {
+  display: flex;
+  gap: 4px;
+}
+
+.segment {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--seg-off);
+  transition: background 0.2s ease;
+}
+
+.segment[data-on='true'] {
+  background: #fff;
+}
