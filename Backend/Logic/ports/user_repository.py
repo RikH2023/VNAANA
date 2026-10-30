@@ -5,6 +5,9 @@ from Backend.Logic.domain.user import User
 
 
 class UserRepository(Protocol):
+    def get_by_identity(self, auth_provider: str, auth_subject: str) -> User | None:
+        ...
+
     def get(self, user_id: uuid.UUID) -> User | None:
         ...
 
@@ -25,4 +28,10 @@ class UserRepository(Protocol):
         user: User,
         tag_ids: list[uuid.UUID],
     ) -> list[uuid.UUID]:
+        ...
+    def get_or_create_by_identity(
+        self,
+        auth_provider: str,
+        auth_subject: str,
+    ) -> User:
         ...

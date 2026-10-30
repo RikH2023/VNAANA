@@ -13,7 +13,7 @@ from Backend.Logic.domain.user import User
 from Backend.Logic.ports.user_repository import (
     UserRepository as UserRepositoryPort,
 )
-
+from sqlalchemy.dialects.postgresql import insert
 
 class UserRepository(UserRepositoryPort):
     def __init__(self, db: Session):
@@ -41,6 +41,13 @@ class UserRepository(UserRepositoryPort):
             return None
 
         return self._to_domain(user)
+
+    def get_by_identity(self, auth_provider: str, auth_subject: str) -> User | None:
+        user = self.db.scalar(select(UserModel).where(
+            UserModel.auth_provider == auth_provider,
+            UserModel.auth_subject == auth_subject,
+        ))
+        return self._to_domain(user) if user is not None else None
 
     def add(self, **fields: Any) -> User:
         user_model = UserModel(**fields)
@@ -111,3 +118,30 @@ class UserRepository(UserRepositoryPort):
         self.db.flush()
 
         return self.get_tag_ids(user.id)
+
+    def get_or_create_by_identity(
+        self,
+        auth_provider: str,
+        auth_subject: str,
+    ) -> User:
+        stmt = insert(UserModel).values(
+            auth_provider=auth_provider,
+            auth_subject=auth_subject,
+        )
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[
+                UserModel.auth_provider,
+                UserModel.auth_subject,
+            ],
+            set_={
+                "auth_subject": stmt.excluded.auth_subject,
+            },
+        ).returning(UserModel)
+
+        user_model = self.db.scalars(
+            stmt,
+            execution_options={"populate_existing": True},
+        ).one()
+
+        return self._to_domain(user_model)

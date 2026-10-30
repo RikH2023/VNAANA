@@ -117,6 +117,31 @@ class PersistenceTests(unittest.TestCase):
         self.db.close()
         self.engine.dispose()
 
+    def test_user_bootstrap_preserves_identity_preferences_and_consent(self):
+        repo = UserRepository(self.db)
+        subject = str(uuid.uuid4())
+        self.assertIsNone(repo.get_by_identity("supabase", subject))
+        first = repo.get_or_create_by_identity("supabase", subject)
+        self.assertFalse(first.analytics_consent)
+        consent_time = datetime.now(timezone.utc)
+        repo.update(first, language="en", preferences={"theme": "dark"},
+                    analytics_consent=True, consent_updated_at=consent_time)
+        self.db.commit()
+        self.db.close()
+        self.db = Session(self.engine, expire_on_commit=False)
+        repo = UserRepository(self.db)
+        again = repo.get_or_create_by_identity("supabase", subject)
+        self.db.commit()
+        self.assertEqual(again.id, first.id)
+        self.assertEqual(again.language, "en")
+        self.assertEqual(again.preferences, {"theme": "dark"})
+        self.assertTrue(again.analytics_consent)
+        self.assertIsNotNone(again.consent_updated_at)
+        self.assertEqual(repo.get_by_identity("supabase", subject).id, first.id)
+        self.assertIsNone(repo.get_by_identity("google", subject))
+        rows = list(self.db.scalars(select(User).where(User.auth_subject == subject)))
+        self.assertEqual(len(rows), 1)
+
     def test_ingestion_preserves_identity_and_non_null_content(self):
         repo = ArticleRepository(self.db)
         first, created = repo.ingest(provider_id=self.provider.id, canonical_url="https://example.test/a",

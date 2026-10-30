@@ -23,5 +23,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  // Check the active app and its imports while the incomplete feed is disconnected.
+  "include": ["src/main.tsx", "src/vite-env.d.ts", "src/lib/**/*.ts"]
 }

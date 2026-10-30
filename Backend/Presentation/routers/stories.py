@@ -5,7 +5,8 @@ import uuid
 from fastapi import APIRouter, Query, status
 
 from Backend.Logic.domain.story import StoryStatus
-from Backend.Presentation.dependencies import AlgorithmServiceDep, StoryServiceDep
+from Backend.Presentation.dependencies import AlgorithmServiceDep, StoryServiceDep, UserServiceDep
+from Backend.Presentation.auth import AuthenticatedSubject
 from Backend.Presentation.schemas.feed import FeedRead
 from Backend.Presentation.schemas.stories import (
     StoryArticleLink,
@@ -44,14 +45,14 @@ def list_stories(
 @router.get("/for-you", response_model=FeedRead)
 def get_for_you(
     service: AlgorithmServiceDep,
-    # TEMPORARY until Google login exists: the user will come from the token,
-    # not from a query parameter anyone can fill in.
-    user_id: uuid.UUID | None = None,
+    subject: AuthenticatedSubject,
+    users: UserServiceDep,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
+    user = users.get_authenticated_user(subject)
     return service.get_feed(
-        user_id,
+        user.id,
         limit=limit,
         offset=offset,
     )

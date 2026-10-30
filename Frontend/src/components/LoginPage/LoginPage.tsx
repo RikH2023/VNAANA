@@ -3,6 +3,8 @@ import type { FormEvent } from 'react'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { Logo } from '../Navigation/Logo'
 import styles from './LoginPage.module.css'
+import { supabase } from '../../lib/supabase'
+import type { Session } from '@supabase/supabase-js'
 
 type Errors = { email?: string; password?: string }
 
@@ -41,8 +43,8 @@ function GoogleIcon() {
 }
 
 /*
- * Log in with email + password, or with Google.
- * Frontend only: nothing is sent anywhere yet. A valid form shows a note instead.
+ * Google sign-in uses Supabase and initializes the verified backend profile.
+ * Email/password login remains a design preview.
  */
 export function LoginPage() {
   const [email, setEmail] = useState('')
@@ -53,11 +55,82 @@ export function LoginPage() {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
-
-  // Coming from the feed, start keyboard and screen reader users at the page title
+  const [session, setSession] = useState<Session | null>(null)
+  const [checkingSession, setCheckingSession] = useState(true)
+  const [backendStatus, setBackendStatus] = useState('')
+  const [signingOut, setSigningOut] = useState(false)
   useEffect(() => {
-    headingRef.current?.focus()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, nextSession) => {
+        setSession(nextSession)
+        setCheckingSession(false)
+      },
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
+  useEffect(() => {
+    if (!session) {
+      setBackendStatus('')
+      return
+    }
+
+    const controller = new AbortController()
+    const accessToken = session.access_token
+
+    async function verifyBackend() {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+
+      if (!apiUrl) {
+        setBackendStatus('Missing backend URL configuration.')
+        return
+      }
+
+      setBackendStatus('Preparing your application profile…')
+
+      try {
+        const response = await fetch(
+          `${apiUrl.replace(/\/$/, '')}/users/me/bootstrap`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            signal: controller.signal,
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error(`Backend returned HTTP ${response.status}`)
+        }
+
+        const profile = await response.json()
+
+        if (typeof profile.id !== 'string') {
+          throw new Error('Backend returned an unexpected profile')
+        }
+
+        if (!controller.signal.aborted) {
+          setBackendStatus(
+            `Your application profile is ready. User ID: ${profile.id}`,
+          )
+        }
+
+      } catch {
+        if (!controller.signal.aborted) {
+          setBackendStatus(
+            'Could not prepare your application profile. Check FastAPI and the bootstrap request.',
+          )
+        }
+      }
+    }
+
+    void verifyBackend()
+
+    return () => controller.abort()
+  }, [session])
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
@@ -68,7 +141,38 @@ export function LoginPage() {
     else setNotice('Logging in isn’t connected yet. This page is a design preview.')
   }
 
-  const onGoogle = () => setNotice('Google sign-in isn’t connected yet. This page is a design preview.')
+  const onGoogle = async () => {
+    setNotice('Opening Google sign-in…')
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      })
+
+      if (error) throw error
+    } catch {
+      setNotice('Could not start Google sign-in. Please try again.')
+    }
+  }
+
+  const onSignOut = async () => {
+    setSigningOut(true)
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' })
+      if (error) throw error
+      setSession(null)
+      setBackendStatus('')
+      setPassword('')
+      setNotice('Signed out on this browser.')
+    } catch {
+      setNotice('Could not sign out. Please try again.')
+    } finally {
+      setSigningOut(false)
+    }
+  }
 
   return (
     <div className={styles.page}>
@@ -86,7 +190,16 @@ export function LoginPage() {
             Log in
           </h1>
           <p className={styles.intro}>Welcome back. Your morning briefing is waiting.</p>
-
+            <p className={styles.notice} role="status">
+            {checkingSession
+              ? 'Checking your session…'
+              : session
+                ? `Signed in as ${session.user.email ?? 'a Supabase user'}`
+                : 'You are not signed in.'}
+          </p>
+            <p className={styles.notice} role="status">
+              {backendStatus}
+             </p>
           <form className={styles.form} onSubmit={onSubmit} noValidate>
             <div className={styles.field}>
               <label htmlFor="login-email" className={styles.label}>
@@ -159,10 +272,16 @@ export function LoginPage() {
             <span>or</span>
           </p>
 
-          <button type="button" className={styles.google} onClick={onGoogle}>
-            <GoogleIcon />
-            Continue with Google
-          </button>
+          {session ? (
+            <button type="button" className={styles.google} onClick={onSignOut} disabled={signingOut}>
+              {signingOut ? 'Signing out…' : 'Sign out'}
+            </button>
+          ) : (
+            <button type="button" className={styles.google} onClick={onGoogle} disabled={checkingSession}>
+              <GoogleIcon />
+              Continue with Google
+            </button>
+          )}
 
           <p className={styles.notice} role="status">
             {notice}
