@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://vnaana:vnaana@localhost:5432/vnaana"
     sql_echo: bool = False
 
+    supabase_url: str
+    supabase_publishable_key: str
 
 @lru_cache
 def get_settings() -> Settings:
