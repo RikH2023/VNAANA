@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
-import { askNova } from '../lib/nova'
-import type { NovaAnswer } from '../lib/nova'
+import { askNova } from '../utils/nova'
+import type { NovaAnswer } from '../utils/nova'
 
 export type ChatMessage =
   | { id: number; from: 'user'; text: string }
