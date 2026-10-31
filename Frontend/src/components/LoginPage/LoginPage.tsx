@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { Logo } from '../Navigation/Logo'
 import styles from './LoginPage.module.css'
 import { supabase } from '../../lib/supabase'
-import type { Session } from '@supabase/supabase-js'
+import type { useAuth } from '../../hooks/useAuth'
 
 type Errors = { email?: string; password?: string }
 
@@ -46,7 +46,8 @@ function GoogleIcon() {
  * Google sign-in uses Supabase and initializes the verified backend profile.
  * Email/password login remains a design preview.
  */
-export function LoginPage() {
+export function LoginPage({ auth }: { auth: ReturnType<typeof useAuth> }) {
+  const { session, checkingSession, backendStatus, signingOut, signOut: onSignOut } = auth
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -55,83 +56,6 @@ export function LoginPage() {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [checkingSession, setCheckingSession] = useState(true)
-  const [backendStatus, setBackendStatus] = useState('')
-  const [signingOut, setSigningOut] = useState(false)
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
-        setSession(nextSession)
-        setCheckingSession(false)
-      },
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-  useEffect(() => {
-    if (!session) {
-      setBackendStatus('')
-      return
-    }
-
-    const controller = new AbortController()
-    const accessToken = session.access_token
-
-    async function verifyBackend() {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL?.trim()
-
-      if (!apiUrl) {
-        setBackendStatus('Missing backend URL configuration.')
-        return
-      }
-
-      setBackendStatus('Preparing your application profile…')
-
-      try {
-        const response = await fetch(
-          `${apiUrl.replace(/\/$/, '')}/users/me/bootstrap`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            signal: controller.signal,
-          },
-        )
-
-        if (!response.ok) {
-          throw new Error(`Backend returned HTTP ${response.status}`)
-        }
-
-        const profile = await response.json()
-
-        if (typeof profile.id !== 'string') {
-          throw new Error('Backend returned an unexpected profile')
-        }
-
-        if (!controller.signal.aborted) {
-          setBackendStatus(
-            `Your application profile is ready. User ID: ${profile.id}`,
-          )
-        }
-
-      } catch {
-        if (!controller.signal.aborted) {
-          setBackendStatus(
-            'Could not prepare your application profile. Check FastAPI and the bootstrap request.',
-          )
-        }
-      }
-    }
-
-    void verifyBackend()
-
-    return () => controller.abort()
-  }, [session])
-
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
     const found = validate(email, password)
@@ -158,22 +82,6 @@ export function LoginPage() {
     }
   }
 
-  const onSignOut = async () => {
-    setSigningOut(true)
-    try {
-      const { error } = await supabase.auth.signOut({ scope: 'local' })
-      if (error) throw error
-      setSession(null)
-      setBackendStatus('')
-      setPassword('')
-      setNotice('Signed out on this browser.')
-    } catch {
-      setNotice('Could not sign out. Please try again.')
-    } finally {
-      setSigningOut(false)
-    }
-  }
-
   return (
     <div className={styles.page}>
       <header className={styles.top}>
@@ -191,15 +99,8 @@ export function LoginPage() {
           </h1>
           <p className={styles.intro}>Welcome back. Your morning briefing is waiting.</p>
             <p className={styles.notice} role="status">
-            {checkingSession
-              ? 'Checking your session…'
-              : session
-                ? `Signed in as ${session.user.email ?? 'a Supabase user'}`
-                : 'You are not signed in.'}
+            {checkingSession ? 'Checking your session…' : backendStatus}
           </p>
-            <p className={styles.notice} role="status">
-              {backendStatus}
-             </p>
           <form className={styles.form} onSubmit={onSubmit} noValidate>
             <div className={styles.field}>
               <label htmlFor="login-email" className={styles.label}>

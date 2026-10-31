@@ -1,4 +1,4 @@
-import { Compass, LogIn, Sparkles } from 'lucide-react'
+import { Compass, LogIn, LogOut, Sparkles } from 'lucide-react'
 import { TOPICS, TOPIC_ICONS } from '../../data/topics'
 import type { User } from '../../types'
 import { Logo } from './Logo'
@@ -6,7 +6,9 @@ import { SearchField } from './SearchField'
 import styles from './Navigation.module.css'
 
 /* Desktop navigation. Below 820px it is replaced by MobileTopBar + MobileTabBar. */
-export function Sidebar({ user }: { user: User }) {
+export function Sidebar({ user, signedIn, signingOut, onSignOut }: {
+  user: User; signedIn: boolean; signingOut: boolean; onSignOut: () => Promise<void>
+}) {
   return (
     <aside className={styles.sidebar}>
       <Logo />
@@ -59,10 +61,15 @@ export function Sidebar({ user }: { user: User }) {
       </section>
 
       <div className={styles.account}>
-        <a href="#login" className={styles.loginButton}>
+        {signedIn ? (
+          <button type="button" className={styles.loginButton} onClick={onSignOut} disabled={signingOut}>
+            <LogOut size={20} aria-hidden="true" />
+            {signingOut ? 'Signing out…' : 'Sign out'}
+          </button>
+        ) : <a href="#login" className={styles.loginButton}>
           <LogIn size={20} aria-hidden="true" />
           Log in
-        </a>
+        </a>}
       </div>
     </aside>
   )

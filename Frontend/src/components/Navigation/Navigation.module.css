@@ -192,6 +192,10 @@
 }
 
 .loginButton {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,6 +244,11 @@
 }
 
 .tab {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
