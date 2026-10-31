@@ -11,7 +11,7 @@ Layers:
 from fastapi import FastAPI
 
 from Backend.Presentation.error_handlers import register_error_handlers
-from Backend.Presentation.routers import articles, stories, users
+from Backend.Presentation.routers import ai, articles, stories, users
 
 app = FastAPI(
     title="VNAANA API",
@@ -24,3 +24,4 @@ register_error_handlers(app)
 app.include_router(users.router)
 app.include_router(stories.router)
 app.include_router(articles.router)
+app.include_router(ai.router)

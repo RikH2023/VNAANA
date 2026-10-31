@@ -36,9 +36,12 @@ from Backend.Dal.repositories.user_repository import (
 )
 
 from Backend.Logic.algorithm_service import AlgorithmService
+from Backend.Logic.ai_service import AIService
 from Backend.Logic.article_service import ArticleService
+from Backend.Logic.ollama_client import OllamaClient
 from Backend.Logic.story_service import StoryService
 from Backend.Logic.user_service import UserService
+from Backend.config import get_settings
 
 
 # ---------------------------------------------------------------------------
@@ -49,6 +52,19 @@ DbSession = Annotated[
     Session,
     Depends(get_db),
 ]
+
+
+def get_ai_service() -> AIService:
+    settings = get_settings()
+    client = OllamaClient(
+        base_url=settings.ollama_base_url,
+        model=settings.ollama_model,
+        timeout_seconds=settings.ollama_timeout_seconds,
+    )
+    return AIService(client.generate)
+
+
+AIServiceDep = Annotated[AIService, Depends(get_ai_service)]
 
 
 # ---------------------------------------------------------------------------
