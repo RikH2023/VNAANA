@@ -93,7 +93,7 @@ The title is the `h2` with `id={titleId}`, so the post has an accessible name.
 
 ## Connecting real AI later
 
-The chat (`src/hooks/useNovaChat.ts`) only calls `askNova(storyId, question)` in `src/lib/nova.ts` and expects `{ text, sources, uncertainty }` back. Replace the body of that function with a real API call (through the backend, so no API key ends up in the browser); nothing else needs to change.
+The chat (`src/hooks/useNovaChat.ts`) only calls `askNova(storyId, question)` in `src/utils/nova.ts` and expects `{ text, sources, uncertainty }` back. Replace the body of that function with a real API call (through the backend, so no API key ends up in the browser); nothing else needs to change.
 
 ## Feed behaviour
 
