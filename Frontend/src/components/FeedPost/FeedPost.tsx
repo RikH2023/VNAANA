@@ -7,7 +7,7 @@ import { PostCarousel } from './PostCarousel'
 import { ASK_NOVA_PART, PART_LABELS, PostContext } from './PostContext'
 import { PostHeader } from './PostHeader'
 import { ReactionBar } from './ReactionBar'
-import { ReadMorePart, WhatHappenedPart, WhyPart } from './parts/Parts'
+import { ReadMorePart, WhatHappenedPart, WhyPart } from './sections/Parts'
 import { usePostActions } from './usePostActions'
 import styles from './FeedPost.module.css'
 

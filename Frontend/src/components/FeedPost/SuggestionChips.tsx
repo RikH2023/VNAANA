@@ -1,4 +1,4 @@
-import { SUGGESTED_QUESTIONS } from '../../lib/nova'
+import { SUGGESTED_QUESTIONS } from '../../utils/nova'
 import styles from './SuggestionChips.module.css'
 
 /* Quick questions for Nova. "row" keeps them on one line that scrolls sideways. */

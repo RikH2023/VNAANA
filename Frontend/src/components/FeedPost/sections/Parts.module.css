@@ -1,0 +1,260 @@
+/* ---------- Image ---------- */
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--line);
+  user-select: none;
+}
+
+/* ---------- Part 1 ---------- */
+
+.whatHappened {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/*
+ * The text keeps its height and sits below the "1 / 3" pill (--part-pad-top).
+ * The image fills the rest, and gives up its height when the carousel has to shrink.
+ */
+.leadText {
+  flex: none;
+  padding: var(--part-pad-top, 18px) 20px 16px;
+}
+
+.leadImage {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 110px;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.summary {
+  margin-top: 10px;
+  font-size: var(--text-summary);
+  line-height: 1.5;
+  color: var(--body);
+}
+
+@container parts (max-width: 520px) {
+  .leadText {
+    padding-inline: 18px;
+  }
+
+  .headline {
+    font-size: 26px;
+  }
+}
+
+/* ---------- Parts 2 & 3 (shared panel) ---------- */
+
+.part {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--part-pad-top, 26px) var(--part-pad-x, 20px) var(--part-pad-bottom, 20px);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.points {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.point {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ui);
+  background: var(--surface);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--body);
+}
+
+.point strong {
+  color: var(--ink);
+}
+
+.number {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.background {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.background strong {
+  color: var(--ink);
+}
+
+.aiNote {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-meta);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.aiNote svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--accent);
+}
+
+/* ---------- Read more + Ask Nova chat ---------- */
+
+/* Scroll area on top, chat composer pinned at the bottom */
+.readMore {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  /* On narrow carousels the composer sits beside the arrow, so less bottom room is needed */
+  padding-bottom: var(--readmore-pad-bottom, var(--part-pad-bottom, 20px));
+}
+
+.readMoreScroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* room for focus outlines inside the scroll area */
+  margin: -4px;
+  padding: 4px;
+}
+
+.sourceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: var(--radius-ui);
+  background: var(--ink);
+  color: #fff;
+  text-decoration: none;
+  --focus: var(--accent);
+}
+
+.sourceCard:hover .sourceTitle {
+  text-decoration: underline;
+}
+
+.sourceLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+}
+
+.sourceTitle {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.sourceMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: var(--text-meta);
+  color: var(--on-dark-muted);
+}
+
+.subhead {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.perspectives {
+  display: grid;
+  gap: 6px;
+}
+
+.perspective {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--tap);
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ui);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.perspective:hover {
+  border-color: var(--line-strong);
+}
+
+.perspective > svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.perspectivePublisher {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.perspectiveAngle {
+  display: block;
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
